@@ -11,4 +11,4 @@ add_executable(${BINARY} ${SOURCES})
 add_library(${BINARY}_lib STATIC ${SOURCES} )
 
 # link with the RPI_RGB library
-target_link_libraries(${BINARY} rpi-rgb-led-matrix)
+target_link_libraries(${BINARY} rpi-rgb-led-matrix Threads::Threads)

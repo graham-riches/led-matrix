@@ -9,6 +9,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# search for mandatory packages
+find_package(Threads REQUIRED)
+
 # add a custom target to generate the git version string
 add_custom_target( BuildVersionHeader ALL DEPENDS version.h )
 

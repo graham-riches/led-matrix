@@ -33,7 +33,7 @@
         {
             "type": "shell",
             "label": "load build",
-            "command": "cd Scripts && sh load_build.sh",
+            "command": "cd scripts && sh load_build.sh",
             "group": "build",
             "problemMatcher": [
                 "$gcc"
