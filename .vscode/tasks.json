@@ -1,0 +1,52 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558 
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "build all",
+            "command": "cd build && make",
+            "group": "build",
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "type": "shell",
+            "label": "build led_matrix",
+            "command": "cd build && make led_matrix",
+            "group": "build",
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "type": "shell",
+            "label": "build tests",
+            "command": "cd build && make led_matrix_tests",
+            "group": "build",
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "type": "shell",
+            "label": "load build",
+            "command": "cd Scripts && sh load_build.sh",
+            "group": "build",
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "type": "shell",
+            "label": "clean",
+            "command": "cd build/src && make clean",
+            "group": "build",
+            "problemMatcher": [
+                "$gcc"
+            ]
+        }    
+    ]
+}

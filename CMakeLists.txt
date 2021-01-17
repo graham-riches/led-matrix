@@ -14,9 +14,16 @@ add_custom_target( BuildVersionHeader ALL DEPENDS version.h )
 
 # set the include directories for the project
 include_directories(
-    src    
+    ${CMAKE_SOURCE_DIR}/src
+	${CMAKE_SOURCE_DIR}/modules/rpi-rgb-led-matrix/include
+	${CMAKE_SOURCE_DIR}/modules/rpi-rgb-led-matrix/lib
+	
 )
 
 # add custom build compiler flags
 SET(GCC_CFLAGS "-g -O0 -Wno-psabi")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_CFLAGS}")
+
+
+# run the prebuild script
+add_custom_command( OUTPUT version.h COMMAND ${CMAKE_SOURCE_DIR}/scripts/prebuild.sh )

@@ -1,0 +1,1 @@
+sshpass -p "raspberry" scp ../build/src/led-matrix pi@192.168.1.40:/home/pi/led-matrix
