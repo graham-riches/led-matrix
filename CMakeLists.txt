@@ -24,6 +24,9 @@ include_directories(
 SET(GCC_CFLAGS "-g -O0 -Wno-psabi")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_CFLAGS}")
 
+# build any sub directories
+add_subdirectory(src)
+add_subdirectory(modules/rpi-rgb-led-matrix)
 
 # run the prebuild script
 add_custom_command( OUTPUT version.h COMMAND ${CMAKE_SOURCE_DIR}/scripts/prebuild.sh )
