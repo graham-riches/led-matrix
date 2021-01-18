@@ -10,17 +10,10 @@
 #include "graphics.h"
 #include "led-matrix.h"
 #include "pixel-mapper.h"
-#include <algorithm>
-#include <assert.h>
-#include <getopt.h>
 #include <iostream>
-#include <limits.h>
-#include <math.h>
-#include <signal.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#include <thread>
+#include <chrono>
+
 
 /********************************** Types *******************************************/
 
@@ -30,18 +23,19 @@ class TestFrameGenerator {
         : _canvas(canvas) { }
 
     void run() {
+        using namespace std::chrono_literals;
         while ( true ) {
-            for ( int row = 0; row < 64; row++ ) {
-                for ( int column = 0; column < 32; column++ ) {
-                    _canvas->SetPixel(row, column, 255, 0, 0);                    
+            for ( int row = 0; row < 32; row++ ) {
+                for ( int column = 0; column < 64; column++ ) {
+                    _canvas->SetPixel(column, row, 255, 0, 0);                    
                 }
-                usleep(10000);
+                std::this_thread::sleep_for(5000ms);
             }
-            for ( int row = 63; row >= 0; row-- ) {
-                for ( int column = 31; column >= 0; column-- ) {
-                    _canvas->SetPixel(row, column, 0, 255, 0);                    
+            for ( int row = 31; row >= 0; row-- ) {
+                for ( int column = 63; column >= 0; column-- ) {
+                    _canvas->SetPixel(column, row, 0, 255, 0);                    
                 }
-                usleep(10000);
+                std::this_thread::sleep_for(5000ms);
             }
         }
     }
@@ -73,13 +67,13 @@ int main(int argc, char* argv[]) {
         std::cout << "ERROR: failed to parse some options\n";
     }
 
-    rgb_matrix::RGBMatrix* matrix = rgb_matrix::RGBMatrix::CreateFromOptions(matrix_options, runtime_opt);
+    auto matrix = rgb_matrix::RGBMatrix::CreateFromOptions(matrix_options, runtime_opt);
     if ( matrix == NULL )
         return 1;
 
     printf("Size: %dx%d. Hardware gpio mapping: %s\n", matrix->width(), matrix->height(), matrix_options.hardware_mapping);
 
-    rgb_matrix::Canvas* canvas = matrix;
+    rgb_matrix::Canvas* canvas = matrix.get();
 
     TestFrameGenerator generator{canvas};
     generator.run();
