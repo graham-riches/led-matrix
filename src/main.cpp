@@ -67,9 +67,13 @@ int main(int argc, char* argv[]) {
         std::cout << "ERROR: failed to parse some options\n";
     }
 
-    auto matrix = rgb_matrix::RGBMatrix::CreateFromOptions(matrix_options, runtime_opt);
-    if ( matrix == NULL )
-        return 1;
+    auto matrix =  std::unique_ptr<rgb_matrix::RGBMatrix>(rgb_matrix::RGBMatrix::CreateFromOptions(matrix_options, runtime_opt));
+    
+    if (!matrix) {
+        std::cout << "ERROR: RGB matrix object allocation failed" << std::endl;
+        return -1;
+    }
+
 
     printf("Size: %dx%d. Hardware gpio mapping: %s\n", matrix->width(), matrix->height(), matrix_options.hardware_mapping);
 
