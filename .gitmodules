@@ -1,0 +1,4 @@
+[submodule "modules/rpi-rgb-led-matrix"]
+	path = modules/rpi-rgb-led-matrix
+	url = https://github.com/graham-riches/rpi-rgb-led-matrix.git
+	branch = main
