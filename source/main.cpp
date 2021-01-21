@@ -17,6 +17,10 @@
 
 /********************************** Types *******************************************/
 
+/**
+ * \brief super garbo test class just used to write some colors to the current pixel
+ * 
+ */
 class TestFrameGenerator {
   public:
     TestFrameGenerator(rgb_matrix::Canvas* canvas)
