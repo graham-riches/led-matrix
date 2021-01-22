@@ -9,10 +9,10 @@
 
 /********************************** Includes *******************************************/
 #include "gtest/gtest.h"
-
+#include "config_parser.h"
 
 /****************************** Function Definitions ***********************************/
 
-TEST(fake_tests, see_if_it_runs) {
-    ASSERT_TRUE(true);
+TEST(matrix_options_tests, see_if_it_runs) {
+    auto result = parse_matrix_options("hello");
 }

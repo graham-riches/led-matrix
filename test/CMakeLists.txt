@@ -27,7 +27,8 @@ set(SOURCES
     main.cpp
     config_tests.cpp
 
-	# add each application file to test here        
+    # add each application file to test here
+    ${PARENT_DIR}/source/config_parser.cpp      
 	)
 
 add_executable(${BINARY} ${SOURCES})
