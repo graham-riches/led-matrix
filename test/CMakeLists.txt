@@ -5,13 +5,12 @@ project(led_matrix_test)
 
 # set the version standards 
 enable_language(C CXX ASM)
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# set visual studio build flags
-set(CMAKE_CXX_FLAGS_RELEASE "/MT")
-set(CMAKE_CXX_FLAGS_DEBUG "/MTd /Zi /Ob0 /Od /RTC1")
+SET(GCC_CFLAGS "-g -O0 -Wno-psabi")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_CFLAGS}")
 
 # search for mandatory packages
 find_package(Threads REQUIRED)
@@ -40,6 +39,7 @@ include_directories(
     ${PARENT_DIR}/source
 	${PARENT_DIR}/modules/rpi-rgb-led-matrix/include
     ${PARENT_DIR}/modules/rpi-rgb-led-matrix/lib
+    ${PARENT_DIR}/modules/json/include
     ${CMAKE_SOURCE_DIR}/googletest/googletest/include
 )
 

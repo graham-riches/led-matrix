@@ -19,7 +19,7 @@
 
 
 
-std::optional<rgb_matrix::RGBMatrix::Options>> parse_matrix_options(const std::string& data);
+std::optional<rgb_matrix::RGBMatrix::Options> parse_matrix_options(const std::string& data);
 
 
 
