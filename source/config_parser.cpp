@@ -5,18 +5,55 @@
 *
 *  \author Graham Riches
 */
-
-
 /********************************** Includes *******************************************/
 #include "config_parser.h"
-#include "nlohmann/json.hpp"
 #include <iostream>
-
-/****************************** Function Definitions ***********************************/
-using json = nlohmann::json;
+#include <map>
 
 
-std::optional<rgb_matrix::RGBMatrix::Options> parse_matrix_options(const std::string& data)
+namespace Configuration
 {
-    std::cout << "blargh";
+/********************************** Local Function Declarations *******************************************/
+
+/**
+ * \brief check if a key is contained in a map and return an optional
+ * 
+ * \tparam ReturnType the type value contained in the map
+ * \tparam Key type of the key to the map
+ * \param map std::map object that might contain the requested key
+ * \param key the requested key
+ * \retval std::optional<ReturnType> returns the value in the map at key if it exists
+ */
+template <typename ReturnType, typename Key>
+std::optional<ReturnType> get(const std::map<Key, ReturnType> &map, Key key) {    
+    for (auto &[k, v] : map) {
+        if (k == key) {
+            return v;
+        }
+    }
+    return {};
 }
+
+
+/********************************** Local Variables *******************************************/
+static const std::map<SetupOptions, std::string> option_keys = { 
+    {SetupOptions::hardware, "hardware"}, {SetupOptions::dimensions, "dimensions"}, {SetupOptions::chaining, "chaining"},
+    {SetupOptions::pwm, "pwm"}, {SetupOptions::display, "display"}
+};
+
+
+
+/********************************** Public Function Definitions *******************************************/
+std::optional<rgb_matrix::RGBMatrix::Options> parse_matrix_options(json &json_data) {
+    rgb_matrix::RGBMatrix::Options options = {0};
+
+    return {};
+}
+
+
+std::optional<rgb_matrix::RuntimeOptionn> parse_runtime_options(json &json_data) {
+
+    return {};
+}
+
+};

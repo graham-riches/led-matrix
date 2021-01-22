@@ -37,7 +37,7 @@
 	},
 	"runtime_options": {
 		"slowdown": 0,
-		"daemonize": "manual",
+		"daemonize": "none",
 		"initialize_gpio": true
 	}
 }
