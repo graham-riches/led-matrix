@@ -1,6 +1,6 @@
 #!/bin/bash
-rm ../src/version.h
-cd ../Scripts
+rm ../source/version.h
+cd ../scripts
 python3 git_version_generator.py version.h
-mv version.h ../src/
+mv version.h ../source/
 cd ../build

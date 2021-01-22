@@ -19,7 +19,8 @@ add_custom_target( BuildVersionHeader ALL DEPENDS version.h )
 include_directories(
     ${CMAKE_SOURCE_DIR}/source
 	${CMAKE_SOURCE_DIR}/modules/rpi-rgb-led-matrix/include
-	${CMAKE_SOURCE_DIR}/modules/rpi-rgb-led-matrix/lib
+    ${CMAKE_SOURCE_DIR}/modules/rpi-rgb-led-matrix/lib
+    ${CMAKE_SOURCE_DIR}/modules/json/include
 	
 )
 
@@ -28,7 +29,7 @@ SET(GCC_CFLAGS "-g -O0 -Wno-psabi")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_CFLAGS}")
 
 # build any sub directories
-add_subdirectory(src)
+add_subdirectory(source)
 add_subdirectory(modules)
 add_subdirectory(modules/json)
 

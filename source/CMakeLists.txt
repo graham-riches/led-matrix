@@ -3,7 +3,8 @@ set(BINARY ${PROJECT_NAME})
 
 # set all the source files for the executable
 set(SOURCES   
-    ${CMAKE_SOURCE_DIR}/src/main.cpp
+    ${CMAKE_SOURCE_DIR}/source/main.cpp
+    ${CMAKE_SOURCE_DIR}/source/config_parser.cpp
     )
 
 # create the executable

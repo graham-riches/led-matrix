@@ -25,11 +25,14 @@ set(BINARY led_matrix_tests)
 set(SOURCES
 	# add unit tests here
     main.cpp
+    config_tests.cpp
 
 	# add each application file to test here        
 	)
 
 add_executable(${BINARY} ${SOURCES})
+target_link_libraries(${BINARY} gtest gtest_main)
+add_test(NAME ${BINARY} COMMAND ${BINARY})
 
 # set the include directories for the project
 include_directories(
