@@ -33,5 +33,5 @@
 
 
 # Build Files
-build/*
+**/build/**
 *version.h
