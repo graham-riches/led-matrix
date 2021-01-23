@@ -6,12 +6,13 @@
 *
 *  \author Graham Riches
 */
-#ifndef __EXPECTED_H
-#    define __EXPECTED_H__
+#ifndef __EXPECTED_H__
+#define __EXPECTED_H__
 
 /********************************** Includes *******************************************/
-#    include <optional>
-#    include <utility>
+#include <optional>
+#include <utility>
+#include <exception>
 
 /********************************** Types *******************************************/
 /**
@@ -58,6 +59,35 @@ class expected {
         expected result;
         result._valid = false;
         new (&result._error) E(std::forward<Args>(params)...);
+        return result;
+    }
+
+    /**
+     * \brief get the expected value out of the variant
+     * \note user should check if the value is valid before trying to access it
+     * 
+     * \retval T& returns a T if it exists, otherwise throws an exception
+     */
+    T& get_value() {
+        if (_valid) {
+            return _value;
+        } else {
+            throw std::logic_error("Expected does not contain a valid value type");
+        }
+    }
+
+    /**
+     * \brief Get the error value out of the union.
+     * \note user should check that it is indeed an error before trying to retrieve it
+     * 
+     * \retval E& the error value if it exists, otherwise an exception
+     */
+    E& get_error() {
+        if (_valid) {
+            throw std::logic_error("Expected does not contain an error type");
+        } else {
+            return _error;
+        }
     }
 
     /**
@@ -111,19 +141,6 @@ class expected {
      */
     operator bool() const {
         return _valid;
-    }
-
-    /**
-     * \brief casting operator to std optional 
-     * 
-     * \retval std::optional<T> 
-     */
-    operator std::optional<T>() const {
-        if ( _valid ) {
-            return _value;
-        } else {
-            return {};
-        }
     }
 
     /**
