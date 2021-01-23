@@ -60,7 +60,7 @@ class expected {
         result._valid = false;
         new (&result._error) E(std::forward<Args>(params)...);
         return result;
-    }
+    }    
 
     /**
      * \brief get the expected value out of the variant
@@ -181,5 +181,43 @@ class expected {
         }
     }
 };
+
+
+/**
+ * \brief monad bind for the expected type that allows chaining of multiple expected operations together
+ * 
+ * \tparam F next function in the chain to bind
+ * \param exp an expected value to wrap into the next sequence
+ * \param f function to wrap exp with
+ * \retval R return type of F(T)
+ * \todo: might need an overload that handles const qualifiers?
+ */
+template <typename T, typename E, typename F, typename R = typename std::result_of_t<F(T)>>
+static R mbind(expected<T, E>& exp, F f) {
+    if (!exp) {
+        return R::error(exp.get_error());
+    } else {
+        return f(exp.get_value());
+    }
+}
+
+/**
+ * \brief overload of the monad bind for the expected type that allows chaining of multiple expected operations together
+ *        for rvalue references
+ * 
+ * \tparam F next function in the chain to bind
+ * \param exp an expected value to wrap into the next sequence
+ * \param f function to wrap exp with
+ * \retval R return type of F(T)
+ * \todo: might need an overload that handles const qualifiers?
+ */
+template <typename T, typename E, typename F, typename R = typename std::result_of_t<F(T)>>
+static R mbind(expected<T, E>&& exp, F f) {
+    if (!exp) {
+        return R::error(exp.get_error());
+    } else {
+        return f(exp.get_value());
+    }
+}
 
 #endif

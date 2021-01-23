@@ -83,3 +83,36 @@ TEST(expected_tests, test_assign_expected_neither_valid) {
     target = copy;    
     ASSERT_EQ("one", target.get_error());
 }
+
+TEST(expected_tests, test_expected_monad_succeeds) {
+    auto result{expected<int, std::string>::success(5)};
+    
+    auto add_one_if_positive = [](int val) {
+        if (val > 0) {
+            return expected<int, std::string>::success(val + 1);
+        } else {
+            return expected<int, std::string>::error("value is zero or negative");
+        }
+    };
+
+    auto value = mbind(mbind(result, add_one_if_positive), add_one_if_positive);
+    ASSERT_TRUE(value);
+    ASSERT_EQ(7, value.get_value());
+}
+
+TEST(expected_tests, test_expected_monad_fails) {
+    auto result{expected<int, std::string>::success(0)};
+    
+    auto add_one_if_positive = [](int val) {
+        if (val > 0) {
+            return expected<int, std::string>::success(val + 1);
+        } else {
+            return expected<int, std::string>::error("value is zero or negative");
+        }
+    };
+
+    auto value = mbind(result, add_one_if_positive);
+    ASSERT_FALSE(value);
+    ASSERT_EQ("value is zero or negative", value.get_error());
+
+}
