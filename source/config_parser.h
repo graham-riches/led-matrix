@@ -10,61 +10,40 @@
 #define __CONFIG_PARSER_H__
 
 /********************************** Includes *******************************************/
+#include "expected.h"
 #include "led-matrix.h"
 #include "nlohmann/json.hpp"
-#include <optional>
 #include <string>
 
 using json = nlohmann::json;
 
 /********************************** Types *******************************************/
-enum class SetupOptions : unsigned { hardware, dimensions, chaining, pwm, display, refresh };
-
-/**
- * \brief enumeration of different hardware settings that are wrapped up int the CLI options
- *        of the led matrix
- */
-enum class HardwareSettings : unsigned { mapping, panel_type, scan_mode, row_address_type, multiplexing };
-
-/**
- * \brief settings for the sizing of the display window
- */
-enum class DimensionSettings : unsigned { rows, columns };
-
-/**
- * \brief settings for connecting multiple displays together
- */
-enum class ChainingSettings : unsigned { chain_length, parallel_chains };
-
-/**
- * \brief settings for different PWM controls
- */
-enum class PWMSettings : unsigned { brightness, invert_colors, rgb_sequence, pixel_mapper };
-
-/**
- * \brief settings for refresh rate limiting and viewing
- * 
- */
-enum class RefreshSettings : unsigned { show_rate, limit_rate };
+enum class SetupOptions : unsigned {
+    hardware_mapping,
+    panel_type,
+    scan_mode,
+    row_address_type,
+    multiplexing,
+    rows,
+    columns,
+    chain_length,
+    parallel_chains,
+    pwm_bits,
+    pwm_lsb_nanoseconds,
+    pwm_dither_bits,
+    disable_hardware_pulsing,
+    brightness,
+    invert_colors,
+    rgb_sequence,
+    pixel_mapper,
+    show_refresh_rate,
+    limit_refresh_rate
+};
 
 /**
  * \brief settings for runtime control
  */
 enum class RuntimeSettings : unsigned { slowdown, daemonize, initialize_gpio };
-
-/**
- * \brief slowdown the display for smoother animations
- */
-enum class SlowdownLevel : unsigned { none, one, two, three, four };
-
-/**
- * \brief handles runtime daemon settings
- */
-enum class DaemonSettings : unsigned {
-    none,  //!< user must manually start the refresh thread
-    off,   //!< refresh thread starts but is not daemonized
-    on     //!< refresh thread starts and is automatically daemonized
-};
 
 /********************************** Function Declarations *******************************************/
 /**
@@ -72,17 +51,17 @@ enum class DaemonSettings : unsigned {
  *        parsing was valid.
  * 
  * \param json_data the json container to parse
- * \retval std::optional<rgb_matrix::RGBMatrix::Options> optional of validated struct
+ * \retval expected of options or a string if configuration is invalid
  */
-std::optional<rgb_matrix::RGBMatrix::Options> parse_matrix_options(json& json_data);
+expected<rgb_matrix::RGBMatrix::Options, std::string> parse_matrix_options(json& json_data);
 
 /**
  * \brief parse runtime options from JSON into a runtime options struct. Returns a RuntimeOptions struct
  *        if all parsing was valid
  * 
  * \param json_data the json container to parse
- * \retval std::optional<rgb_matrix::RuntimeOption> optional of validated struct
+ * \retval expected of RuntimeOptions or an error string if configuration is invalid
  */
-std::optional<rgb_matrix::RuntimeOptions> parse_runtime_options(json& json_data);
+expected<rgb_matrix::RuntimeOptions, std::string> parse_runtime_options(json& json_data);
 
 #endif /* __CONFIG_PARSER_H__ */
