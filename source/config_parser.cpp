@@ -11,8 +11,6 @@
 #include <map>
 
 
-namespace Configuration
-{
 /********************************** Local Function Declarations *******************************************/
 
 /**
@@ -45,15 +43,15 @@ static const std::map<SetupOptions, std::string> option_keys = {
 
 /********************************** Public Function Definitions *******************************************/
 std::optional<rgb_matrix::RGBMatrix::Options> parse_matrix_options(json &json_data) {
-    rgb_matrix::RGBMatrix::Options options = {0};
+    //rgb_matrix::RGBMatrix::Options options;
 
     return {};
 }
 
 
-std::optional<rgb_matrix::RuntimeOptionn> parse_runtime_options(json &json_data) {
+std::optional<rgb_matrix::RuntimeOptions> parse_runtime_options(json &json_data) {
 
     return {};
 }
 
-};
+

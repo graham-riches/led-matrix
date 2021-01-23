@@ -7,43 +7,30 @@
 *  \author Graham Riches
 */
 #ifndef __EXPECTED_H
-#define __EXPECTED_H__
+#    define __EXPECTED_H__
 
-#include <utility>
+/********************************** Includes *******************************************/
+#    include <optional>
+#    include <utility>
 
+/********************************** Types *******************************************/
+/**
+ * \brief class template for an expected type. This either contains a T with the _valid result
+ *        of the computation, or an E, which is any custom error type
+ * 
+ * \tparam T type of the expected in the success case
+ * \tparam E type of the expected in the error case
+ */
 template <typename T, typename E>
 class expected {
-    public:
+  private:
+    union {
+        T _value;
+        E _error;
+    };
+    bool _valid;
 
-    /**
-     * \brief Construct a new expected object from a copy
-     * 
-     * \param other the other to copy from
-     */
-    expected(const expected& other)
-    : valid(other.valid) {
-        if (valid) {
-            new (&value) T(other.value);
-        } else {
-            new (&error) E(other.error);
-        }
-    }
-
-    /**
-     * \brief Construct a new expected object from a move
-     * 
-     * \param other the other to mvoe
-     */
-    expected(expected&& other) 
-    : valid(other.valid) {
-        if (valid) {
-            new (&value) T(std::move(other.value));
-        } else {
-            new (&error) E(std::move(other.error));
-        }
-    }
-    
-
+  public:
     /**
      * \brief factory method to create an expected from the success type
      * 
@@ -54,8 +41,8 @@ class expected {
     template <typename... Args>
     static expected success(Args&&... params) {
         expected result;
-        result.valid = true;
-        new (&result.value) T(std::forward<Args>(params)...);
+        result._valid = true;
+        new (&result._value) T(std::forward<Args>(params)...);
         return result;
     }
 
@@ -69,30 +56,113 @@ class expected {
     template <typename... Args>
     static expected error(Args&&... params) {
         expected result;
-        result.valid = false;
-        new (&result.error) E(std::forward<Args>(params)...)
+        result._valid = false;
+        new (&result._error) E(std::forward<Args>(params)...);
     }
 
-    private:
-    union {
-        T value;
-        E error;
-    };
-    bool valid;
+    /**
+     * \brief Construct a new expected object with the default constructor
+     */
+    expected() {};
+
+    /**
+     * \brief Construct a new expected object from a copy
+     * 
+     * \param other the other to copy from
+     */
+    expected(const expected& other)
+        : _valid(other._valid) {
+        if ( _valid ) {
+            new (&_value) T(other._value);
+        } else {
+            new (&_error) E(other._error);
+        }
+    }
+
+    /**
+     * \brief Construct a new expected object from a move
+     * 
+     * \param other the other to mvoe
+     */
+    expected(expected&& other)
+        : _valid(other._valid) {
+        if ( _valid ) {
+            new (&_value) T(std::move(other._value));
+        } else {
+            new (&_error) E(std::move(other._error));
+        }
+    }
+
+    /**
+     * \brief copy assignment operator uses the exception safe swap idiom
+     * 
+     * \param other other expected to assign to this
+     * \retval expected& 
+     */
+    expected& operator=(expected other) {
+        swap(other);
+        return *this;
+    }
+
+    /**
+     * \brief casting operator to bool so that expected types can directly be used in control flow
+     * 
+     * \retval returns true if the expected contains type T and not E
+     */
+    operator bool() const {
+        return _valid;
+    }
+
+    /**
+     * \brief casting operator to std optional 
+     * 
+     * \retval std::optional<T> 
+     */
+    operator std::optional<T>() const {
+        if ( _valid ) {
+            return _value;
+        } else {
+            return {};
+        }
+    }
 
     /**
      * \brief Destroy the expected object based on the contained type in the union    
      */
     ~expected() {
-        if (valid) {
-            value.~T();
+        if ( _valid ) {
+            _value.~T();
         } else {
-            error.~E();
+            _error.~E();
+        }
+    }
+
+    /**
+     * \brief helper function that implements the swap idiom for exception safety during the assignment
+     *        operator
+     * 
+     * \param other the other expected to assign to this
+     */
+    void swap(expected& other) {
+        if ( _valid ) {
+            if ( other._valid ) {
+                std::swap(_value, other._value);
+            } else {
+                auto temp_error = std::move(other._error);
+                other._error.~E();
+                new (&other._value) T(std::move(_value));
+                _value.~T();
+                new (&_error) E(std::move(temp_error));
+                std::swap(_valid, other._valid);
+            }
+        } else {
+            if ( other._valid ) {
+                other.swap(*this);
+            } else {
+                std::swap(_error, other._error);
+            }
         }
     }
 };
-
-
-
 
 #endif

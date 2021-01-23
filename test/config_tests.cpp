@@ -10,10 +10,14 @@
 /********************************** Includes *******************************************/
 #include "gtest/gtest.h"
 #include "config_parser.h"
+#include "nlohmann/json.hpp"
 
-/****************************** Function Definitions ***********************************/
+using json = nlohmann::json;
+
+/****************************** Unit Tests ***********************************/
 
 TEST(matrix_options_tests, see_if_it_runs) {
-    auto result = parse_matrix_options("hello");
+    json j = "hello";
+    auto result = parse_matrix_options(j);
     ASSERT_TRUE(true);
 }

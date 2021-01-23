@@ -15,8 +15,6 @@
 #include <optional>
 #include <string>
 
-namespace Configuration
-{
 using json = nlohmann::json;
 
 /********************************** Types *******************************************/
@@ -86,7 +84,5 @@ std::optional<rgb_matrix::RGBMatrix::Options> parse_matrix_options(json& json_da
  * \retval std::optional<rgb_matrix::RuntimeOption> optional of validated struct
  */
 std::optional<rgb_matrix::RuntimeOptions> parse_runtime_options(json& json_data);
-
-};  // namespace Configuration
 
 #endif /* __CONFIG_PARSER_H__ */
