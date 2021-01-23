@@ -25,8 +25,8 @@ namespace Configuration
  * \retval std::optional<ReturnType> returns the value in the map at key if it exists
  */
 template <typename ReturnType, typename Key>
-std::optional<ReturnType> get(const std::map<Key, ReturnType> &map, Key key) {    
-    for (auto &[k, v] : map) {
+std::optional<ReturnType> get_value(const std::map<Key, ReturnType> &map, Key key) {    
+    for (const auto& [k, v] : map) {
         if (k == key) {
             return v;
         }
