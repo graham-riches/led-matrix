@@ -59,7 +59,7 @@ class TestFrameGenerator {
  */
 int main(int argc, char* argv[]) {
     using json = nlohmann::json;
-    std::ifstream stream{"../config/config.json"};
+    std::ifstream stream{"config.json"};
     json config;
     stream >> config;
 

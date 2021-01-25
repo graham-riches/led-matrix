@@ -48,11 +48,12 @@ expected<ConfigurationOptions, std::string> create_options_from_json(json& confi
     ConfigurationOptions options;
 
     std::vector<char*> option_fields;
-    for (const auto& element : config) {
-        auto cli_flag = get_value(flag_options, std::string{element});
+    for (const auto& [key, value] : config.items()) {
+        auto cli_flag = get_value(flag_options, std::string{key});
+        std::cout << "Config: " << key << " Value: " << value << std::endl;
         if (cli_flag) {
-            option_fields.push_back(cli_flag.value().data());            
-            option_fields.push_back(std::string{element}.data());
+            option_fields.push_back(cli_flag.value().data());
+            option_fields.push_back(std::string{value}.data());
         }
     }
 

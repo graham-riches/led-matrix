@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/build/source/led_matrix",
             "miDebuggerServerAddress": "192.168.1.40:9091",
-            "miDebuggerPath": "/usr/bin/gdb-multiarch",
+            "miDebuggerPath": "/usr/bin/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-gdb",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
