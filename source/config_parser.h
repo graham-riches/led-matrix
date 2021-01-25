@@ -19,7 +19,10 @@
 using json = nlohmann::json;
 
 /********************************** Types *******************************************/
-
+struct ConfigurationOptions {
+    rgb_matrix::RGBMatrix::Options options;
+    rgb_matrix::RuntimeOptions runtime_options;
+};
 
 /********************************** Function Declarations *******************************************/
 /**
@@ -29,7 +32,7 @@ using json = nlohmann::json;
  * \param config the json container to parse
  * \retval expected of options or a string if configuration is invalid
  */
-expected<std::unique_ptr<rgb_matrix::RGBMatrix>, std::string> parse_setup_options(json& config);
+expected<ConfigurationOptions, std::string> create_options_from_json(json& config);
 
 
 

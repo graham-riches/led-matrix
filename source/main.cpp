@@ -9,9 +9,11 @@
 #include "canvas.h"
 #include "led-matrix.h"
 #include "config_parser.h"
+#include "nlohmann/json.hpp"
 #include <iostream>
 #include <thread>
 #include <chrono>
+#include <fstream>
 
 
 /********************************** Types *******************************************/
@@ -56,16 +58,24 @@ class TestFrameGenerator {
  * \retval int process return value
  */
 int main(int argc, char* argv[]) {
+    using json = nlohmann::json;
+    std::ifstream stream{"../config/config.json"};
+    json config;
+    stream >> config;
+
+    auto options = create_options_from_json(config);
+    if (!options) {
+        std::cout << "Error: matrix configuration is invalid\n";
+        return -1;
+    }
     
-    auto matrix = parse_setup_options()
-
-    
-
-
+    /*
+    auto matrix = matrix_expected.get_value();
     rgb_matrix::Canvas* canvas = matrix.get();
 
     TestFrameGenerator generator{canvas};
     generator.run();
+    */
 
     return 0;
 }

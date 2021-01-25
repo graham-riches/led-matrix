@@ -44,34 +44,25 @@ const std::map<std::string, std::string> flag_options = {{"hardware_mapping", "-
                                                         {"daemonize", "--led-daemon"}};
 
 /********************************** Public Function Definitions *******************************************/
-expected<std::unique_ptr<rgb_matrix::RGBMatrix>, std::string> parse_setup_options(json& config) {
-    rgb_matrix::RGBMatrix::Options options;
-    rgb_matrix::RuntimeOptions runtime_options;
+expected<ConfigurationOptions, std::string> create_options_from_json(json& config) {
+    ConfigurationOptions options;
 
     std::vector<char*> option_fields;
     for (const auto& element : config) {
         auto cli_flag = get_value(flag_options, std::string{element});
         if (cli_flag) {
-            std::string flag = cli_flag.value();
-            std::string option_string = flag.append(std::string{element});
-            option_fields.push_back(option_string.data());
+            option_fields.push_back(cli_flag.value().data());            
+            option_fields.push_back(std::string{element}.data());
         }
     }
 
     char **fuck_this_library = option_fields.data();
 
-    if (rgb_matrix::ParseOptionsFromFlags(option_fields.size(), &fuck_this_library, &options, &runtime_options)) {
-        std::cout << "in the parser\n"; 
+    if (rgb_matrix::ParseOptionsFromFlags(option_fields.size(), &fuck_this_library, &options.options, &options.runtime_options)) {
+        
+        return expected<ConfigurationOptions, std::string>::error("Invalid configuration options");
     }
-
-    std::string validation_errors;
-    if ( options.Validate(&validation_errors) ) {
-        auto matrix = std::unique_prt<rgb_matrix::RGBMatrix>(rgb_matrix::CreateMatrixFromOptions(options, runtime_options));
-        //return expected<rgb_matrix::RGBMatrix::Options, std::string>::success(options);
-        return expected<std::unique_ptr<rgb_matrix::RGBMatrix>, std::string>::error(validation_errors);
-    } else {
-        return expected<std::unique_ptr<rgb_matrix::RGBMatrix>, std::string>::error(validation_errors);
-    }
+    return expected<ConfigurationOptions, std::string>::success(options);
 }
 
 
