@@ -7,9 +7,8 @@
 
 /********************************** Includes *******************************************/
 #include "canvas.h"
-#include "graphics.h"
 #include "led-matrix.h"
-#include "pixel-mapper.h"
+#include "config_parser.h"
 #include <iostream>
 #include <thread>
 #include <chrono>
@@ -57,29 +56,11 @@ class TestFrameGenerator {
  * \retval int process return value
  */
 int main(int argc, char* argv[]) {
-    rgb_matrix::RGBMatrix::Options matrix_options;
-    rgb_matrix::RuntimeOptions runtime_opt;
-
-    // These are the defaults when no command-line flags are given.
-    matrix_options.rows = 32;
-    matrix_options.chain_length = 1;
-    matrix_options.parallel = 1;
-
-    // First things first: extract the command line flags that contain
-    // relevant matrix options.
-    if ( !rgb_matrix::ParseOptionsFromFlags(&argc, &argv, &matrix_options, &runtime_opt) ) {
-        std::cout << "ERROR: failed to parse some options\n";
-    }
-
-    auto matrix =  std::unique_ptr<rgb_matrix::RGBMatrix>(rgb_matrix::RGBMatrix::CreateFromOptions(matrix_options, runtime_opt));
     
-    if (!matrix) {
-        std::cout << "ERROR: RGB matrix object allocation failed" << std::endl;
-        return -1;
-    }
+    auto matrix = parse_setup_options()
 
+    
 
-    printf("Size: %dx%d. Hardware gpio mapping: %s\n", matrix->width(), matrix->height(), matrix_options.hardware_mapping);
 
     rgb_matrix::Canvas* canvas = matrix.get();
 

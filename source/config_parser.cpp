@@ -14,82 +14,66 @@
 #include <vector>
 
 /********************************** Types and Aliases *******************************************/
-using rgb_matrix::RGBMatrix::Options = options;  //!< alias to simplify getting at rgb_matrix options struct
-
-/**
- * \brief function pointer for a parser type that creates a new options struct based on an optional JSON tag
- */
-typedef options (*json_field_parser)(const json& data, options options);
-
 
 /********************************** Local Function Declarations *******************************************/
 template <typename ReturnType, typename Key>
 std::optional<ReturnType> get_value(const std::map<Key, ReturnType>& map, Key key);
 
-//!< special attribute parsers for JSON setup options
-static options hardware_mapping(const json& data, options options);
-static options panel_type(const json& data, options options);
-static options scan_mode(const json& data, options options);
-static options row_address_type(const json& data, options options);
-static options multiplexing(const json& data, options options);
-static options rows(const json& data, options options);
-static options columns(const json& data, options options);
-static options chain_length(const json& data, options options);
-static options parallel_chains(const json& data, options options);
-static options pwm_bits(const json& data, options options);
-static options pwm_lsb_nanoseconds(const json& data, options options);
-static options pwm_dither_bits(const json& data, options options);
-static options disable_hardware_pulsing(const json& data, options options);
-static options brightness(const json& data, options options);
-static options invert_colors(const json& data, options options);
-static options rgb_sequence(const json& data, options options);
-static options pixel_mapper(const json& data, options options);
-static options show_refresh_rate(const json& data, options options);
-static options limit_refresh_rate(const json& data, options options);
-
 
 /********************************** Local Variables *******************************************/
-const std::map<std::string, json_field_parser> parsers = {{"hardware_mapping", hardware_mapping},
-                                                          {"panel_type", panel_type},
-                                                          {"scan_mode", scan_mode},
-                                                          {"row_address_type", row_address_type},
-                                                          {"multiplexing", multiplexing},
-                                                          {"rows", rows},
-                                                          {"columns", columns},
-                                                          {"chain_length", chain_length},
-                                                          {"parallel_chains", parallel_chains},
-                                                          {"pwm_bits", pwm_bits},
-                                                          {"pwm_lsb_nanoseconds", pwm_lsb_nanoseconds},
-                                                          {"pwm_dither_bits", pwm_dither_bits},
-                                                          {"disable_hardware_pulsing", disable_hardware_pulsing},
-                                                          {"brightness", brightness},
-                                                          {"invert_colors", invert_colors},
-                                                          {"rgb_sequence", rgb_sequence},
-                                                          {"pixel_mapper", pixel_mapper},
-                                                          {"show_refresh_rate", show_refresh_rate},
-                                                          {"limit_refresh_rate", limit_refresh_rate}};
-
+const std::map<std::string, std::string> flag_options = {{"hardware_mapping", "--led-gpio-mapping"},
+                                                        {"panel_type", "--led-panel-type"},
+                                                        {"scan_mode", "--led-scan-mode"},
+                                                        {"row_address_type", "--led-row-addr-type"},
+                                                        {"multiplexing", "--led-multiplexing"},
+                                                        {"rows", "--led-rows"},
+                                                        {"columns", "--led-cols"},
+                                                        {"chain_length", "--led-chain"},
+                                                        {"parallel_chains", "--led-parallel"},
+                                                        {"pwm_bits", "--led-pwm-bits"},
+                                                        {"pwm_lsb_nanoseconds", "--led-pwm-lsb-nanoseconds"},
+                                                        {"pwm_dither_bits", "--led-pwm-dither-bits"},
+                                                        {"disable_hardware_pulsing", "--led-hardware-pulse"},
+                                                        {"brightness", "--led-brightness"},
+                                                        {"invert_colors", "--led-inverse"},
+                                                        {"rgb_sequence", "--led-rgb-sequence"},
+                                                        {"pixel_mapper", "--led-pixel-mapper"},
+                                                        {"show_refresh_rate", "--led-show-refresh"},
+                                                        {"limit_refresh_rate", "--led-limit-refresh"},
+                                                        {"slowdown", "--led-slowdown-gpio"},
+                                                        {"daemonize", "--led-daemon"}};
 
 /********************************** Public Function Definitions *******************************************/
-expected<options, std::string> parse_matrix_options(json& json_data) {
-    rgb_matrix::RGBMatrix::Options options();
+expected<std::unique_ptr<rgb_matrix::RGBMatrix>, std::string> parse_setup_options(json& config) {
+    rgb_matrix::RGBMatrix::Options options;
+    rgb_matrix::RuntimeOptions runtime_options;
 
-    auto fields = json_data["setup_options"];
-    for ( const auto& field : fields ) {
+    std::vector<char*> option_fields;
+    for (const auto& element : config) {
+        auto cli_flag = get_value(flag_options, std::string{element});
+        if (cli_flag) {
+            std::string flag = cli_flag.value();
+            std::string option_string = flag.append(std::string{element});
+            option_fields.push_back(option_string.data());
+        }
+    }
+
+    char **fuck_this_library = option_fields.data();
+
+    if (rgb_matrix::ParseOptionsFromFlags(option_fields.size(), &fuck_this_library, &options, &runtime_options)) {
+        std::cout << "in the parser\n"; 
     }
 
     std::string validation_errors;
-    if ( options.validate(&validation_errors) ) {
-        return expected<rgb_matrix::RGBMatrix::Options, std::string>::success(options);
+    if ( options.Validate(&validation_errors) ) {
+        auto matrix = std::unique_prt<rgb_matrix::RGBMatrix>(rgb_matrix::CreateMatrixFromOptions(options, runtime_options));
+        //return expected<rgb_matrix::RGBMatrix::Options, std::string>::success(options);
+        return expected<std::unique_ptr<rgb_matrix::RGBMatrix>, std::string>::error(validation_errors);
     } else {
-        return expected<rgb_matrix::RGBMatrix::Options, std::string>::error(validation_errors);
+        return expected<std::unique_ptr<rgb_matrix::RGBMatrix>, std::string>::error(validation_errors);
     }
 }
 
-expected<rgb_matrix::RuntimeOptions, std::string> parse_runtime_options(json& json_data) {
-
-    return {};
-}
 
 
 /********************************** Local Function Definitions *******************************************/
@@ -111,25 +95,3 @@ std::optional<ReturnType> get_value(const std::map<Key, ReturnType>& map, Key ke
     }
     return {};
 }
-
-
-
-static options hardware_mapping(const json& data, options options);
-static options panel_type(const json& data, options options);
-static options scan_mode(const json& data, options options);
-static options row_address_type(const json& data, options options);
-static options multiplexing(const json& data, options options);
-static options rows(const json& data, options options);
-static options columns(const json& data, options options);
-static options chain_length(const json& data, options options);
-static options parallel_chains(const json& data, options options);
-static options pwm_bits(const json& data, options options);
-static options pwm_lsb_nanoseconds(const json& data, options options);
-static options pwm_dither_bits(const json& data, options options);
-static options disable_hardware_pulsing(const json& data, options options);
-static options brightness(const json& data, options options);
-static options invert_colors(const json& data, options options);
-static options rgb_sequence(const json& data, options options);
-static options pixel_mapper(const json& data, options options);
-static options show_refresh_rate(const json& data, options options);
-static options limit_refresh_rate(const json& data, options options);

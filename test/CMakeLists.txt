@@ -24,11 +24,7 @@ set(BINARY led_matrix_tests)
 set(SOURCES
 	# add unit tests here
     main.cpp
-    config_tests.cpp
     expected_tests.cpp
-
-    # add each application file to test here
-    ${PARENT_DIR}/source/config_parser.cpp      
 	)
 
 add_executable(${BINARY} ${SOURCES})
