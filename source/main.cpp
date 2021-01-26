@@ -58,24 +58,28 @@ class TestFrameGenerator {
  * \retval int process return value
  */
 int main(int argc, char* argv[]) {
+    /* open the json configuration file and parse it into an expected ADT which contains either valid JSON or an error message */
     using json = nlohmann::json;
     std::ifstream stream{"config.json"};
-    json config;
-    stream >> config;
+    json config = json::parse(stream);    
 
-    auto options = create_options_from_json(config);
-    if (!options) {
+    auto maybe_options = create_options_from_json(config);
+    if (!maybe_options) {
         std::cout << "Error: matrix configuration is invalid\n";
+        std::cout << maybe_options.get_error() << std::endl;
         return -1;
     }
-    
-    /*
-    auto matrix = matrix_expected.get_value();
-    rgb_matrix::Canvas* canvas = matrix.get();
 
+    /* create the RGB Matrix object from the validated options. Note: wrap the raw pointer returned from the Matrix factory method in a 
+       unique pointer for memory management */
+    auto options = maybe_options.get_value();
+    auto matrix = std::unique_ptr<rgb_matrix::RGBMatrix>(rgb_matrix::CreateMatrixFromOptions(options.options, options.runtime_options));
+    
+    /* get a pointer to the base canvas object and passs that to the crappy test frame generator to draw some stuff */
+    rgb_matrix::Canvas* canvas = matrix.get();
     TestFrameGenerator generator{canvas};
     generator.run();
-    */
+    
 
     return 0;
 }

@@ -14,14 +14,30 @@
 #include "led-matrix.h"
 #include "nlohmann/json.hpp"
 #include <string>
+#include <vector>
 #include <memory>
 
 using json = nlohmann::json;
 
 /********************************** Types *******************************************/
+
+/**
+ * \brief set of string options to manage the memory requirements for the matrix configuration structure
+ */
+struct StringOptions {
+    std::string hardware_mapping;
+    std::string panel_type;
+    std::string led_rgb_sequence;
+    std::string pixel_mapper_config;
+};
+
+/**
+ * \brief structure to hold the complete set of matrix options
+ */
 struct ConfigurationOptions {
     rgb_matrix::RGBMatrix::Options options;
     rgb_matrix::RuntimeOptions runtime_options;
+    StringOptions string_options;
 };
 
 /********************************** Function Declarations *******************************************/
