@@ -59,9 +59,8 @@ class TestFrameGenerator {
  */
 int main(int argc, char* argv[]) {
     /* open the json configuration file and parse it into an expected ADT which contains either valid JSON or an error message */
-    using json = nlohmann::json;
-    std::ifstream stream{"config.json"};
-    json config = json::parse(stream);    
+    using json = nlohmann::json;    
+    json config = json::parse(std::ifstream{"config.json"});    
 
     auto maybe_options = create_options_from_json(config);
     if (!maybe_options) {
