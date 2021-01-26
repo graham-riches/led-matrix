@@ -38,6 +38,28 @@ struct ConfigurationOptions {
     rgb_matrix::RGBMatrix::Options options;
     rgb_matrix::RuntimeOptions runtime_options;
     StringOptions string_options;
+
+    /**
+     * \brief Construct a new Configuration Options object with the default constructor
+     */
+    ConfigurationOptions() = default;
+
+    /**
+     * \brief Construct a new Configuration Options object by copy, which requires
+     *        a deep copy to reset the string pointers
+     * 
+     * \param other the other to copy from
+     */
+    ConfigurationOptions(const ConfigurationOptions& other) {
+        string_options = other.string_options;
+        runtime_options = other.runtime_options;
+        options = other.options;
+        /* reset option string pointers */
+        options.hardware_mapping = string_options.hardware_mapping.c_str();
+        options.panel_type = string_options.panel_type.c_str();
+        options.led_rgb_sequence = string_options.led_rgb_sequence.c_str();
+        options.pixel_mapper_config = string_options.pixel_mapper_config.c_str();
+    }
 };
 
 /********************************** Function Declarations *******************************************/

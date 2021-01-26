@@ -1,6 +1,6 @@
 {
-    "hardware_mapping": "adafruit_hat_pwm",
-    "panel_type": "default",
+    "hardware_mapping": "adafruit-hat-pwm",
+    "panel_type": "",
     "scan_mode": 0,
     "row_address_type": 0,
     "multiplexing": 0,

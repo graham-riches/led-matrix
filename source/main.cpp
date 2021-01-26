@@ -34,13 +34,13 @@ class TestFrameGenerator {
                 for ( int column = 0; column < 64; column++ ) {
                     _canvas->SetPixel(column, row, 255, 0, 0);                    
                 }
-                std::this_thread::sleep_for(5000ms);
+                std::this_thread::sleep_for(50ms);
             }
             for ( int row = 31; row >= 0; row-- ) {
                 for ( int column = 63; column >= 0; column-- ) {
                     _canvas->SetPixel(column, row, 0, 255, 0);                    
                 }
-                std::this_thread::sleep_for(5000ms);
+                std::this_thread::sleep_for(50ms);
             }
         }
     }
