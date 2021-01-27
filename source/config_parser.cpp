@@ -67,6 +67,8 @@ const std::map<std::string, Options> flag_options = {{"hardware_mapping", Option
                                                      {"slowdown", Options::slowdown},
                                                      {"daemonize", Options::daemonize}};
 
+static const std::map<std::string, int> daemon_settings = {{"manual", -1}, {"on", 1}, {"off", 0}};
+
 /********************************** Public Function Definitions *******************************************/
 expected<ConfigurationOptions, std::string> create_options_from_json(json& config) {
     ConfigurationOptions options;
@@ -159,10 +161,11 @@ expected<ConfigurationOptions, std::string> create_options_from_json(json& confi
                     options.runtime_options.gpio_slowdown = int{value};
                     break;
 
-                case Options::daemonize:
-                    /* TODO map daemon options */
-                    options.runtime_options.daemon = 0;
+                case Options::daemonize: {
+                    auto daemon_setting = get_value(daemon_settings, std::string{value});
+                    options.runtime_options.daemon = (daemon_setting) ? daemon_setting.value() : 0;
                     break;
+                }
 
                 default:
                     break;

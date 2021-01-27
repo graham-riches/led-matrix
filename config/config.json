@@ -19,5 +19,5 @@
     "show_refresh_rate": false,
     "limit_refresh_rate": 60,
     "slowdown": 0,
-    "daemonize": "none"
+    "daemonize": "manual"
 }

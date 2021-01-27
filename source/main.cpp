@@ -74,6 +74,8 @@ int main(int argc, char* argv[]) {
     auto options = maybe_options.get_value();
     auto matrix = std::unique_ptr<rgb_matrix::RGBMatrix>(rgb_matrix::CreateMatrixFromOptions(options.options, options.runtime_options));
     
+    matrix->StartRefresh();
+
     /* get a pointer to the base canvas object and passs that to the crappy test frame generator to draw some stuff */
     rgb_matrix::Canvas* canvas = matrix.get();
     TestFrameGenerator generator{canvas};
