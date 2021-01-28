@@ -6,8 +6,7 @@
 *
 *  \author Graham Riches
 */
-#ifndef __CONFIG_PARSER_H__
-#define __CONFIG_PARSER_H__
+#pragma once
 
 /********************************** Includes *******************************************/
 #include "expected.h"
@@ -71,7 +70,3 @@ struct ConfigurationOptions {
  * \retval expected of options or a string if configuration is invalid
  */
 expected<ConfigurationOptions, std::string> create_options_from_json(json& config);
-
-
-
-#endif /* __CONFIG_PARSER_H__ */

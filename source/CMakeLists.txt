@@ -5,6 +5,7 @@ set(BINARY ${PROJECT_NAME})
 set(SOURCES   
     ${CMAKE_SOURCE_DIR}/source/main.cpp
     ${CMAKE_SOURCE_DIR}/source/config_parser.cpp
+    ${CMAKE_SOURCE_DIR}/source/io_server.cpp
     )
 
 # create the executable
@@ -12,4 +13,4 @@ add_executable(${BINARY} ${SOURCES})
 add_library(${BINARY}_lib STATIC ${SOURCES} )
 
 # link with the RPI_RGB library
-target_link_libraries(${BINARY} rpi-rgb-led-matrix Threads::Threads)
+target_link_libraries(${BINARY} rpi-rgb-led-matrix Threads::Threads ${Boost_SYSTEM_LIBRARY} ${Boost_THREAD_LIBRARY})

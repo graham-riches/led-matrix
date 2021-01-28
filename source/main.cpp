@@ -10,6 +10,7 @@
 #include "led-matrix.h"
 #include "config_parser.h"
 #include "nlohmann/json.hpp"
+#include "io_server.h"
 #include <iostream>
 #include <thread>
 #include <chrono>
@@ -32,7 +33,8 @@ class TestFrameGenerator {
         while ( true ) {
             for ( int row = 0; row < 32; row++ ) {
                 for ( int column = 0; column < 64; column++ ) {
-                    _canvas->SetPixel(column, row, 255, 0, 0);                    
+                    _canvas->SetPixel(column, row, 255, 0, 0);
+                    std::this_thread::sleep_for(100ms);
                 }
                 std::this_thread::sleep_for(50ms);
             }
@@ -75,6 +77,9 @@ int main(int argc, char* argv[]) {
     auto matrix = std::unique_ptr<rgb_matrix::RGBMatrix>(rgb_matrix::CreateMatrixFromOptions(options.options, options.runtime_options));
     
     matrix->StartRefresh();
+
+    IOServer server;
+    server.run();
 
     /* get a pointer to the base canvas object and passs that to the crappy test frame generator to draw some stuff */
     rgb_matrix::Canvas* canvas = matrix.get();

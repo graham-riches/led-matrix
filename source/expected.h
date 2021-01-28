@@ -6,8 +6,7 @@
 *
 *  \author Graham Riches
 */
-#ifndef __EXPECTED_H__
-#define __EXPECTED_H__
+#pragma once
 
 /********************************** Includes *******************************************/
 #include <optional>
@@ -219,5 +218,3 @@ static R mbind(expected<T, E>&& exp, F f) {
         return f(exp.get_value());
     }
 }
-
-#endif

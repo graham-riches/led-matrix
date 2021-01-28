@@ -11,6 +11,11 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 # search for mandatory packages
 find_package(Threads REQUIRED)
+find_package(Boost REQUIRED system)
+
+if(Boost_FOUND)
+    include_directories(${Boost_INCLUDE_DIRS})
+endif()
 
 # add a custom target to generate the git version string
 add_custom_target( BuildVersionHeader ALL DEPENDS version.h )
