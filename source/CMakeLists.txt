@@ -5,7 +5,6 @@ set(BINARY ${PROJECT_NAME})
 set(SOURCES   
     ${CMAKE_SOURCE_DIR}/source/main.cpp
     ${CMAKE_SOURCE_DIR}/source/config_parser.cpp
-    ${CMAKE_SOURCE_DIR}/source/io_server.cpp
     )
 
 # create the executable

@@ -1,0 +1,72 @@
+/**
+ * \file io_sinks.h
+ * \author Graham Riches (graham.riches@live.com)
+ * \brief 
+ * \version 0.1
+ * \date 2021-01-29
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
+
+/********************************** Includes *******************************************/
+#include <utility>
+#include <functional>
+
+
+/********************************** Types *******************************************/
+
+namespace IOInternals {
+
+/**
+ * \brief implementation of the sink object. Wrapped in a namespace to be somewhat hidden
+ * 
+ * \tparam Sender type that conforms to the IO actor interface : TODO probably re-define that class :S
+ * \tparam Function message handler function
+ * \tparam Sender::value_type type of the sender messages
+ */
+template <typename Sender, typename Function, typename MessageType = typename Sender::value_type>
+class SinkImpl {
+    public:
+    /**
+     * \brief create a sink instance
+     * 
+     * \param sender message sender object
+     * \param function message handler function
+     */
+    SinkImpl(Sender&& sender, Function&& function)
+    : _sender(std::move(sender))
+    , _function(function) {
+        _sender.set_message_emit_handler( [this](MessageType&& message){
+            process_message(std::move(message));
+        });
+    }
+ 
+    /**
+     * \brief function to pass a receive message on to the internally registered function object
+     * 
+     * \param message rvalue reference to the message. Moved to function.
+     */
+    void process_message(MessageType&& message) const {
+        std::invoke(_function, std::move(message));
+    }
+
+    private:
+    Sender _sender;
+    Function _function;
+};
+
+};
+
+
+/**
+ * \brief helper function to create a new sink object
+ * 
+ * \param sender message sender object
+ * \param function message handler function 
+ * \retval new instance of a sink with the attributes passed in
+ */
+template <typename Sender, typename Function>
+auto sink(Sender&& sender, Function&& function) {
+    return IOInternals::SinkImpl(std::forward<Sender>(sender), std::forward<Function>(function));
+}

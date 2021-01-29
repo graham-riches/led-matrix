@@ -10,7 +10,9 @@
 #include "led-matrix.h"
 #include "config_parser.h"
 #include "nlohmann/json.hpp"
-#include "io_server.h"
+#include "io_service.h"
+#include "io_sinks.h"
+#include <boost/asio.hpp>
 #include <iostream>
 #include <thread>
 #include <chrono>
@@ -78,8 +80,10 @@ int main(int argc, char* argv[]) {
     
     matrix->StartRefresh();
 
-    IOServer server;
-    server.run();
+    boost::asio::io_service service;
+
+    auto io_pipeline = sink(IOService(service, 1234), [](const auto& message){ std::cout << message << std::endl; } );
+    service.run();
 
     /* get a pointer to the base canvas object and passs that to the crappy test frame generator to draw some stuff */
     rgb_matrix::Canvas* canvas = matrix.get();
