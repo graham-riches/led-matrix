@@ -35,3 +35,7 @@
 # Build Files
 **/build/**
 *version.h
+
+# PyCharm Stuff
+*venv*
+*idea*

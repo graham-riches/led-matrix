@@ -10,11 +10,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # search for mandatory packages
+set(CMAKE_FIND_ROOT_PATH /usr/local/boost)
 find_package(Threads REQUIRED)
-find_package(Boost REQUIRED system)
+find_package(Boost REQUIRED)
 
 if(Boost_FOUND)
-    set(Boost_USE_STATIC_LIBS   ON)
+    set(Boost_USE_STATIC_LIBS ON)
     include_directories(${Boost_INCLUDE_DIRS})
 endif()
 
