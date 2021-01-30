@@ -82,7 +82,7 @@ int main(int argc, char* argv[]) {
 
     boost::asio::io_service service;
 
-    auto io_pipeline = sink(IOService(service, 1234), [](const auto& message){ std::cout << message << std::endl; } );
+    auto io_pipeline = IOService(service) | sink([](const auto& message){ std::cout << message << std::endl; });
     service.run();
 
     /* get a pointer to the base canvas object and passs that to the crappy test frame generator to draw some stuff */
