@@ -143,6 +143,8 @@ class IOService {
                 //!< output the message: TODO could wrap into an expected?
                 std::cerr << error.message() << std::endl;
             }
+
+            accept_connections(); //!< listen for new connections
         });
     }
 
