@@ -9,6 +9,8 @@
  * 
  */
 
+#pragma once
+
 /********************************** Includes *******************************************/
 #include <functional>
 #include <utility>
@@ -51,7 +53,7 @@ class SinkImpl {
 
   private:
     Sender _sender;
-    Function _function;
+    Function _function;    
 };
 
 /**

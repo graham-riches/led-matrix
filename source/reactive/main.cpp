@@ -10,8 +10,7 @@
 #include "led-matrix.h"
 #include "config_parser.h"
 #include "nlohmann/json.hpp"
-#include "io_service.h"
-#include "io_sinks.h"
+#include "reactive.h"
 #include <boost/asio.hpp>
 #include <iostream>
 #include <thread>
@@ -58,7 +57,8 @@ int main(int argc, char* argv[]) {
 
     /* start up a TCP server to receive control messages */
     boost::asio::io_service service;
-    auto io_pipeline = IOService(service) | sink([](const auto& message){ std::cout << message << std::endl; });    
+    auto io_pipeline = IOService(service) |                        
+    sink([](const auto& message){ std::cout << message << std::endl; });    
 
     /* start the IO service */
     threads.push_back(std::thread{ [&service](){service.run();} });        
