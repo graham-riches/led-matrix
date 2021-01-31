@@ -9,7 +9,7 @@
 #pragma once
 
 /********************************** Includes *******************************************/
-#include "expected.h"
+#include "expected.hpp"
 #include "led-matrix.h"
 #include "nlohmann/json.hpp"
 #include <string>

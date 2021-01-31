@@ -12,6 +12,6 @@
 #pragma once
 
 /********************************** Includes *******************************************/
-#include "filter.h"
-#include "transform.h"
-#include "sinks.h"
+#include "filter.hpp"
+#include "transform.hpp"
+#include "sinks.hpp"

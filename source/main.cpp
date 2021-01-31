@@ -8,10 +8,10 @@
 /********************************** Includes *******************************************/
 #include "canvas.h"
 #include "led-matrix.h"
-#include "config_parser.h"
+#include "config_parser.hpp"
 #include "nlohmann/json.hpp"
-#include "reactive.h"
-#include "io_service.h"
+#include "reactive.hpp"
+#include "io_service.hpp"
 #include <boost/asio.hpp>
 #include <iostream>
 #include <thread>

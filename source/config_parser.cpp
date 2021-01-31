@@ -6,7 +6,7 @@
 *  \author Graham Riches
 */
 /********************************** Includes *******************************************/
-#include "config_parser.h"
+#include "config_parser.hpp"
 #include <algorithm>
 #include <functional>
 #include <iostream>
