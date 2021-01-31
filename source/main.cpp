@@ -17,41 +17,12 @@
 #include <thread>
 #include <chrono>
 #include <fstream>
+#include <thread>
+#include <vector>
 
 
 /********************************** Types *******************************************/
 
-/**
- * \brief super garbo test class just used to write some colors to the current pixel
- * 
- */
-class TestFrameGenerator {
-  public:
-    TestFrameGenerator(rgb_matrix::Canvas* canvas)
-        : _canvas(canvas) { }
-
-    void run() {
-        using namespace std::chrono_literals;
-        while ( true ) {
-            for ( int row = 0; row < 32; row++ ) {
-                for ( int column = 0; column < 64; column++ ) {
-                    _canvas->SetPixel(column, row, 255, 0, 0);
-                    std::this_thread::sleep_for(100ms);
-                }
-                std::this_thread::sleep_for(50ms);
-            }
-            for ( int row = 31; row >= 0; row-- ) {
-                for ( int column = 63; column >= 0; column-- ) {
-                    _canvas->SetPixel(column, row, 0, 255, 0);                    
-                }
-                std::this_thread::sleep_for(50ms);
-            }
-        }
-    }
-
-  private:
-    rgb_matrix::Canvas* const _canvas;
-};
 
 /****************************** Function Definitions ***********************************/
 /**
@@ -74,22 +45,28 @@ int main(int argc, char* argv[]) {
     }
 
     /* create the RGB Matrix object from the validated options. Note: wrap the raw pointer returned from the Matrix factory method in a 
-       unique pointer for memory management */
+       unique pointer for memory management.
+       TODO: matrix has an internal thread that can't be accessed directly, which is a minor inconvenience as it can't share same threading structure
+             as other application components
+       */
     auto options = maybe_options.get_value();
-    auto matrix = std::unique_ptr<rgb_matrix::RGBMatrix>(rgb_matrix::CreateMatrixFromOptions(options.options, options.runtime_options));
-    
-    matrix->StartRefresh();
+    auto matrix = std::unique_ptr<rgb_matrix::RGBMatrix>(rgb_matrix::CreateMatrixFromOptions(options.options, options.runtime_options));    
+    matrix->StartRefresh();    
 
+    /* create a vector of threads to hold the threads that will do the other application work */
+    std::vector<std::thread> threads;
+
+    /* start up a TCP server to receive control messages */
     boost::asio::io_service service;
+    auto io_pipeline = IOService(service) | sink([](const auto& message){ std::cout << message << std::endl; });    
 
-    auto io_pipeline = IOService(service) | sink([](const auto& message){ std::cout << message << std::endl; });
-    service.run();
+    /* start the IO service */
+    threads.push_back(std::thread{ [&service](){service.run();} });        
 
-    /* get a pointer to the base canvas object and passs that to the crappy test frame generator to draw some stuff */
-    rgb_matrix::Canvas* canvas = matrix.get();
-    TestFrameGenerator generator{canvas};
-    generator.run();
-    
+    /* wait for threads to be done their work */
+    for (const auto& thread : threads) {
+        thread.join();
+    }
 
     return 0;
 }

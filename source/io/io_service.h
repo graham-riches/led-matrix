@@ -139,8 +139,7 @@ class IOService {
                 //!< move the ownership of the socket into the session and start the session
                 auto session = make_shared_session(std::move(_socket), _emitter);
                 session->start();
-            } else {
-                //!< output the message: TODO could wrap into an expected?
+            } else {                
                 std::cerr << error.message() << std::endl;
             }
 
