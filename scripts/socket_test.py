@@ -7,9 +7,13 @@
 """
 
 import socket
+import json
+import time
 
 if __name__ == '__main__':
     socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     socket.connect(('192.168.1.40', 1234))
     for i in range(5):
-        socket.send('hello from client\n'.encode())
+        lights_on = {'x': i, 'y': i, 'r': 255, 'g': 0, 'b': 0}
+        socket.send(json.dumps(lights_on).encode())        
+        time.sleep(1)

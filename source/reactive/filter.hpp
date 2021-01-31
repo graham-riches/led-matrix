@@ -40,7 +40,7 @@ class filter_impl {
      */
     filter_impl(Sender&& sender, Predicate predicate)
         : _sender(std::move(sender))
-        , _predicate(std::move(predicate)) { }
+        , _predicate(predicate) { }
 
     /**
      * \brief Set the message emitter to pass on the received messages
@@ -96,6 +96,17 @@ auto filter(Sender&& sender, Predicate&& predicate) {
 
 namespace operators
 {
+/**
+ * \brief helper template to partially apply a predicate
+ * 
+ * \param predicate the function to bind
+ * \retval helper that will be converted into a complete filter actor later
+ */
+template <typename Predicate>
+auto filter(Predicate&& predicate) {
+    return reactive::internals::filter_helper<Predicate>{std::forward<Predicate>(predicate)};
+}
+
 /**
  * \brief operator | to allow for range-style pipe syntax
  * 

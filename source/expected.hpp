@@ -12,6 +12,8 @@
 #include <optional>
 #include <utility>
 #include <exception>
+#include <functional>
+
 
 /********************************** Types *******************************************/
 /**
@@ -67,11 +69,40 @@ class expected {
      * 
      * \retval T& returns a T if it exists, otherwise throws an exception
      */
+    const T& get_value() const {
+        if (_valid) {
+            return _value;
+        } else {
+            throw std::logic_error("Expected does not contain a valid value type");
+        }
+    }
+
+    /**
+     * \brief get the expected value out of the variant
+     * \note user should check if the value is valid before trying to access it
+     * 
+     * \retval T& returns a T if it exists, otherwise throws an exception
+     */
     T& get_value() {
         if (_valid) {
             return _value;
         } else {
             throw std::logic_error("Expected does not contain a valid value type");
+        }
+    }
+
+
+    /**
+     * \brief Get the error value out of the union.
+     * \note user should check that it is indeed an error before trying to retrieve it
+     * 
+     * \retval E& the error value if it exists, otherwise an exception
+     */
+    const E& get_error() const {
+        if (_valid) {
+            throw std::logic_error("Expected does not contain an error type");
+        } else {
+            return _error;
         }
     }
 
@@ -181,40 +212,18 @@ class expected {
     }
 };
 
-
 /**
  * \brief monad bind for the expected type that allows chaining of multiple expected operations together
- * 
- * \tparam F next function in the chain to bind
- * \param exp an expected value to wrap into the next sequence
- * \param f function to wrap exp with
- * \retval R return type of F(T)
- * \todo: might need an overload that handles const qualifiers?
+ *
+ * \param exp expected type
+ * \param f function to bind with
+ * \retval R result or an error
  */
-template <typename T, typename E, typename F, typename R = typename std::result_of_t<F(T)>>
-static R mbind(expected<T, E>& exp, F f) {
-    if (!exp) {
-        return R::error(exp.get_error());
+template <typename T, typename E, typename F, typename R = decltype(std::declval<F>()(std::declval<T>()))>
+R mbind(const expected<T, E>& exp, F f) {
+    if (exp) {
+        return std::invoke(f, exp.get_value());
     } else {
-        return f(exp.get_value());
-    }
-}
-
-/**
- * \brief overload of the monad bind for the expected type that allows chaining of multiple expected operations together
- *        for rvalue references
- * 
- * \tparam F next function in the chain to bind
- * \param exp an expected value to wrap into the next sequence
- * \param f function to wrap exp with
- * \retval R return type of F(T)
- * \todo: might need an overload that handles const qualifiers?
- */
-template <typename T, typename E, typename F, typename R = typename std::result_of_t<F(T)>>
-static R mbind(expected<T, E>&& exp, F f) {
-    if (!exp) {
         return R::error(exp.get_error());
-    } else {
-        return f(exp.get_value());
     }
 }
