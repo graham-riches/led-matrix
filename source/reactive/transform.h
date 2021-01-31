@@ -17,3 +17,15 @@
 
 
 /********************************** Types *******************************************/
+namespace reactive
+{
+namespace internals
+{
+
+};
+
+namespace operators
+{
+
+};
+};

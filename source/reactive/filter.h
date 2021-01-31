@@ -1,7 +1,7 @@
 /**
  * \file io_filter.h
  * \author Graham Riches (graham.riches@live.com)
- * \brief defines filtering operations for reactive IO streams
+ * \brief defines filtering operations for reactive streams
  * \version 0.1
  * \date 2021-01-31
  * 
@@ -15,10 +15,11 @@
 #include <functional>
 #include <utility>
 
-
 /********************************** Types *******************************************/
-namespace IOInternals {
-
+namespace reactive
+{
+namespace internals
+{
 /**
  * \brief filter a reactive stream by a predicate function. Returns only messages that satisfy the predicate.
  * 
@@ -27,8 +28,8 @@ namespace IOInternals {
  * \tparam Sender::value_type type of the passed messages
  */
 template <typename Sender, typename Predicate, typename MessageType = typename Sender::value_type>
-class FilterImpl {
-    public:
+class filter_impl {
+  public:
     using value_type = MessageType;
 
     /**
@@ -37,9 +38,9 @@ class FilterImpl {
      * \param sender the sender object
      * \param predicate filtering predicate
      */
-    FilterImpl(Sender&& sender, Predicate predicate)
-    : _sender(std::move(sender))
-    , _predicate(std::move(predicate)) {}
+    filter_impl(Sender&& sender, Predicate predicate)
+        : _sender(std::move(sender))
+        , _predicate(std::move(predicate)) { }
 
     /**
      * \brief Set the message emitter to pass on the received messages
@@ -50,29 +51,25 @@ class FilterImpl {
     void set_message_emit_handler(EmitFunction emitter) {
         _emitter = emitter;
         //!< create a lambda to register as the emitter for the previous connection in the chain
-        _sender.set_message_emit_handler( [this](MessageType&& message){
-            process_message(std::move(message));
-        });
+        _sender.set_message_emit_handler([this](MessageType&& message) { process_message(std::move(message)); });
     }
-    
+
     /**
      * \brief processes a received message by checking the supplied predicate and only forwarding if valid
      * 
      * \param message the received message
      */
-    void process_message(MessageType&& message) const {        
-        if (std::invoke(_predicate, message)) {
+    void process_message(MessageType&& message) const {
+        if ( std::invoke(_predicate, message) ) {
             _emitter(std::move(message));
         }
     }
 
-    private:
+  private:
     Sender _sender;
     Predicate _predicate;
-    std::function<void(MessageType&&) _emitter;
-
+    std::function<void(MessageType&&)> _emitter;
 };
-
 
 /**
  * \brief helper class template to allow partial application of filter implementation
@@ -80,11 +77,10 @@ class FilterImpl {
  * \tparam Predicate the predicate function to bind
  */
 template <typename Predicate>
-struct FilterHelper {
+struct filter_helper {
     Predicate predicate;
 };
-};
-
+};  // namespace internals
 
 /**
  * \brief helper function to apply a filter to a reactive stream
@@ -95,10 +91,11 @@ struct FilterHelper {
  */
 template <typename Sender, typename Predicate>
 auto filter(Sender&& sender, Predicate&& predicate) {
-    return IOInternals::FilterImpl<Sender, Predicate>(std::forward<Sender>(sender), std::forward<Predicate>(predicate));
+    return reactive::internals::filter_impl<Sender, Predicate>(std::forward<Sender>(sender), std::forward<Predicate>(predicate));
 }
 
-
+namespace operators
+{
 /**
  * \brief operator | to allow for range-style pipe syntax
  * 
@@ -107,6 +104,9 @@ auto filter(Sender&& sender, Predicate&& predicate) {
  * \retval auto 
  */
 template <typename Sender, typename Predicate>
-auto operator |(Sender&& sender, IOInternals::FilterHelper<Predicate> predicate) {
-    return IOInternals::FilterImpl<Sender, Predicate>(std::forward<Sender>(sender), std::forward<Predicate>(predicate.predicate));
+auto operator|(Sender&& sender, reactive::internals::filter_helper<Predicate> predicate) {
+    return reactive::internals::filter_impl<Sender, Predicate>(std::forward<Sender>(sender), std::forward<Predicate>(predicate.predicate));
 }
+
+};  // namespace operators
+};  // namespace reactive

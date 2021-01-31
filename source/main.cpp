@@ -11,6 +11,7 @@
 #include "config_parser.h"
 #include "nlohmann/json.hpp"
 #include "reactive.h"
+#include "io_service.h"
 #include <boost/asio.hpp>
 #include <iostream>
 #include <thread>
@@ -56,15 +57,16 @@ int main(int argc, char* argv[]) {
     std::vector<std::thread> threads;
 
     /* start up a TCP server to receive control messages */
+    using namespace reactive::operators;
     boost::asio::io_service service;
-    auto io_pipeline = IOService(service) |                        
+    auto io_pipeline = io_service(service) |                        
     sink([](const auto& message){ std::cout << message << std::endl; });    
 
     /* start the IO service */
     threads.push_back(std::thread{ [&service](){service.run();} });        
 
     /* wait for threads to be done their work */
-    for (const auto& thread : threads) {
+    for (auto& thread : threads) {
         thread.join();
     }
 

@@ -17,9 +17,10 @@
 
 /********************************** Types *******************************************/
 
-namespace IOInternals
+namespace reactive
 {
-
+namespace internals
+{
 /**
  * \brief implementation of the sink object. Wrapped in a namespace to be somewhat hidden
  * 
@@ -28,7 +29,7 @@ namespace IOInternals
  * \tparam Sender::value_type type of the sender messages
  */
 template <typename Sender, typename Function, typename MessageType = typename Sender::value_type>
-class SinkImpl {
+class sink_impl {
   public:
     /**
      * \brief create a sink instance
@@ -36,7 +37,7 @@ class SinkImpl {
      * \param sender message sender object
      * \param function message handler function
      */
-    SinkImpl(Sender&& sender, Function&& function)
+    sink_impl(Sender&& sender, Function&& function)
         : _sender(std::move(sender))
         , _function(function) {
         _sender.set_message_emit_handler([this](MessageType&& message) { process_message(std::move(message)); });
@@ -53,7 +54,7 @@ class SinkImpl {
 
   private:
     Sender _sender;
-    Function _function;    
+    Function _function;
 };
 
 /**
@@ -62,11 +63,10 @@ class SinkImpl {
  * \tparam Function template function
  */
 template <typename Function>
-struct SinkHelper {
+struct sink_helper {
     Function function;
 };
-
-};  // namespace IOInternals
+};  // namespace internals
 
 /**
  * \brief helper function to create a new sink object
@@ -77,9 +77,11 @@ struct SinkHelper {
  */
 template <typename Sender, typename Function>
 auto sink(Sender&& sender, Function&& function) {
-    return IOInternals::SinkImpl(std::forward<Sender>(sender), std::forward<Function>(function));
+    return reactive::internals::sink_impl(std::forward<Sender>(sender), std::forward<Function>(function));
 }
 
+namespace operators
+{
 /**
  * \brief partially applied version of the sink function to allow operation chaining via pipes
  *  
@@ -88,7 +90,7 @@ auto sink(Sender&& sender, Function&& function) {
  */
 template <typename Function>
 auto sink(Function&& function) {
-    return IOInternals::SinkHelper<Function>{std::forward<Function>(function)};
+    return reactive::internals::sink_helper<Function>{std::forward<Function>(function)};
 }
 
 /**
@@ -99,7 +101,9 @@ auto sink(Function&& function) {
  * \retval auto 
  */
 template <typename Sender, typename Function>
-auto operator|(Sender&& sender, IOInternals::SinkHelper<Function> sink) {
-    return IOInternals::SinkImpl<Sender, Function>(std::forward<Sender>(sender), std::forward<Function>(sink.function));
+auto operator|(Sender&& sender, reactive::internals::sink_helper<Function> sink) {
+    return reactive::internals::sink_impl<Sender, Function>(std::forward<Sender>(sender), std::forward<Function>(sink.function));
 }
 
+};  // namespace operators
+};  // namespace reactive

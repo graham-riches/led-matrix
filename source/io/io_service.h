@@ -28,17 +28,17 @@
  * \tparam EmitFunction message handler function to emit received messages to another actor
  */
 template <typename EmitFunction>
-class IOSession : public std::enable_shared_from_this<IOSession<EmitFunction>> {
+class io_session : public std::enable_shared_from_this<io_session<EmitFunction>> {
     using tcp = boost::asio::ip::tcp;
 
   public:
     /**
-     * \brief Construct a new IOSession object
+     * \brief Construct a new io_session object
      * 
      * \param socket rvalue reference to a socket object
      * \param emitter emit function which passes received messages to a handler function
      */
-    IOSession(tcp::socket&& socket, EmitFunction emitter)
+    io_session(tcp::socket&& socket, EmitFunction emitter)
         : _socket(std::move(socket))
         , _emitter(emitter) { }
 
@@ -51,7 +51,7 @@ class IOSession : public std::enable_shared_from_this<IOSession<EmitFunction>> {
 
   private:
     //!< alias to remove some boilerplate while using std::enable_shared_from_this below
-    using shared_session = std::enable_shared_from_this<IOSession<EmitFunction>>;
+    using shared_session = std::enable_shared_from_this<io_session<EmitFunction>>;
 
     /**
      * \brief asynchronously read from a session until a new line is received. The new line is then passed
@@ -87,14 +87,14 @@ class IOSession : public std::enable_shared_from_this<IOSession<EmitFunction>> {
  */
 template <typename Socket, typename EmitFunction>
 auto make_shared_session(Socket&& socket, EmitFunction&& emitter) {
-    return std::make_shared<IOSession<EmitFunction>>(std::forward<Socket>(socket), std::forward<EmitFunction>(emitter));
+    return std::make_shared<io_session<EmitFunction>>(std::forward<Socket>(socket), std::forward<EmitFunction>(emitter));
 }
 
 /**
  * \brief IO service object that will create a TCP endpoint, receive messages asynchronously, and will 
  *        call whatever emit function is registered to the session
  */
-class IOService {
+class io_service {
     using tcp = boost::asio::ip::tcp;
 
   public:
@@ -102,18 +102,18 @@ class IOService {
     using value_type = std::string;
 
     /**
-     * \brief Construct a new IOService object
+     * \brief Construct a new io_service object
      * 
      * \param service reference to a boost io_service object
      * \param port connection port the server will listen on
      */
-    explicit IOService(boost::asio::io_service& service, uint16_t port = 1234)
+    explicit io_service(boost::asio::io_service& service, uint16_t port = 1234)
         : _acceptor(service, tcp::endpoint{tcp::v4(), port})
         , _socket(service) { }
 
     //!< disable copy construction and allow moves
-    IOService(const IOService& other) = delete;
-    IOService(IOService&& other) = default;
+    io_service(const io_service& other) = delete;
+    io_service(io_service&& other) = default;
 
     /**
      * \brief Set the emit handler function, which will pass any received messages to a user-specified function
@@ -139,11 +139,11 @@ class IOService {
                 //!< move the ownership of the socket into the session and start the session
                 auto session = make_shared_session(std::move(_socket), _emitter);
                 session->start();
-            } else {                
+            } else {
                 std::cerr << error.message() << std::endl;
             }
 
-            accept_connections(); //!< listen for new connections
+            accept_connections();  //!< listen for new connections
         });
     }
 
