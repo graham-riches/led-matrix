@@ -15,5 +15,6 @@ if __name__ == '__main__':
     socket.connect(('192.168.1.40', 1234))
     for i in range(5):
         lights_on = {'x': i, 'y': i, 'r': 255, 'g': 0, 'b': 0}
-        socket.send(json.dumps(lights_on).encode())        
+        message = '{}\n'.format(json.dumps(lights_on))
+        socket.send(message.encode())        
         time.sleep(1)

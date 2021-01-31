@@ -90,8 +90,7 @@ int main(int argc, char* argv[]) {
                            if ( !exp ) {
                                std::cerr << "Instruction does not contain valid JSON" << std::endl;
                            } else {
-                               auto instruction = exp.get_value();
-                               std::cout << "here\n";
+                               auto instruction = exp.get_value();                               
                                matrix->SetPixel(instruction.x, instruction.y, instruction.r, instruction.g, instruction.b);
                            }
                        });
