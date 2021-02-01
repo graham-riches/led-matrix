@@ -18,6 +18,6 @@
     "pixel_mapper": "",
     "show_refresh_rate": false,
     "limit_refresh_rate": 60,
-    "slowdown": 0,
+    "slowdown": 1,
     "daemonize": "manual"
 }
