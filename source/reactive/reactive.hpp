@@ -1,5 +1,5 @@
 /**
- * \file reactive.h
+ * \file reactive.hpp
  * \author Graham Riches (graham.riches@live.com)
  * \brief single include for the entire reactive components library
  * \version 0.1

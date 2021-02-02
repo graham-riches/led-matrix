@@ -1,4 +1,4 @@
-/*! \file config_parser.h
+/*! \file config_parser.hpp
 *
 *  \brief config_parser module for parsing a configuration JSON file into a validated
 *         configuration structure for the matrix and other application components.

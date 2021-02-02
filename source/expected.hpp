@@ -1,4 +1,4 @@
-/*! \file expected.h
+/*! \file expected.hpps
 *
 *  \brief expected algebraic data type for error handling. This essentially an either type
 *         or an expanded optional that returns either the type, or a custom error type.

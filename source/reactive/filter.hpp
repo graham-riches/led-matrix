@@ -1,5 +1,5 @@
 /**
- * \file io_filter.h
+ * \file io_filter.hpp
  * \author Graham Riches (graham.riches@live.com)
  * \brief defines filtering operations for reactive streams
  * \version 0.1

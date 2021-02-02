@@ -1,5 +1,5 @@
 /**
- * \file io_sinks.h
+ * \file io_sinks.hpp
  * \author Graham Riches (graham.riches@live.com)
  * \brief 
  * \version 0.1

@@ -1,5 +1,5 @@
 /**
- * \file io_transform.h
+ * \file io_transform.hpp
  * \author Graham Riches (graham.riches@live.com)
  * \brief defines transformation operators on reactive IO streams
  * \version 0.1
