@@ -13,11 +13,15 @@
 /********************************** Includes *******************************************/
 #include "gtest/gtest.h"
 #include "expected.hpp"
+#include "font_parser.hpp"
 #include <string>
 #include <exception>
+#include <sstream>
 
 
 /****************************** Unit Tests ***********************************/
-TEST(font_parser_tests, test_hello_world) {
-    ASSERT_TRUE(true);
+TEST(font_parser_tests, test_empty_stream_returns_error) {
+    std::stringstream input;
+    auto font = fonts::parse(input);
+    ASSERT_FALSE( font );
 }

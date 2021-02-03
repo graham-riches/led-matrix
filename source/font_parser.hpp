@@ -16,6 +16,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <sstream>
 #include "expected.hpp"
 
 namespace fonts
@@ -71,12 +72,12 @@ class font {
 
 /********************************** Function Definitions *******************************************/
 /**
- * \brief attemp to read a font file and return a font object. Wrapped in an expected since parsing the font can obviously fail.
+ * \brief parse a stream of data that is stored as a stream
  * 
- * \param font_filepath path to the font file
+ * \param stream the stream containing the data
  * \retval excpected<font, std::string> 
  */
-expected<fonts::font, std::string> load_and_parse_font(const std::string& font_filepath);
+expected<font, std::string> parse(const std::stringstream& stream);
 
 
 

@@ -23,9 +23,12 @@ get_filename_component(PARENT_DIR ${CMAKE_SOURCE_DIR} DIRECTORY)
 set(BINARY led_matrix_tests)
 set(SOURCES
 	# add unit tests here
-    main.cpp
-    expected_tests.cpp
-    font_parser_tests.cpp
+    ${CMAKE_SOURCE_DIR}/main.cpp
+    ${CMAKE_SOURCE_DIR}/expected/expected_tests.cpp
+    ${CMAKE_SOURCE_DIR}/font_parser/font_parser_tests.cpp
+
+    # add source files here
+    ${PARENT_DIR}/source/font_parser.cpp
 	)
 
 add_executable(${BINARY} ${SOURCES})
