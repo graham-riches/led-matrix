@@ -16,6 +16,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include "expected.hpp"
 
 namespace fonts
 {
@@ -69,7 +70,13 @@ class font {
 
 
 /********************************** Function Definitions *******************************************/
-
+/**
+ * \brief attemp to read a font file and return a font object. Wrapped in an expected since parsing the font can obviously fail.
+ * 
+ * \param font_filepath path to the font file
+ * \retval excpected<font, std::string> 
+ */
+expected<fonts::font, std::string> load_and_parse_font(const std::string& font_filepath);
 
 
 

@@ -9,7 +9,7 @@
 
 /********************************** Includes *******************************************/
 #include "gtest/gtest.h"
-#include "expected.h"
+#include "expected.hpp"
 #include <string>
 #include <exception>
 

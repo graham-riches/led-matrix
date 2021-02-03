@@ -30,7 +30,15 @@ include_directories(
 	${CMAKE_SOURCE_DIR}/modules/rpi-rgb-led-matrix/include
     ${CMAKE_SOURCE_DIR}/modules/rpi-rgb-led-matrix/lib
     ${CMAKE_SOURCE_DIR}/modules/json/include
-	
+    ${CMAKE_SOURCE_DIR}/modules/range-v3/include/range/v3/action
+    ${CMAKE_SOURCE_DIR}/modules/range-v3/include/range/v3/algorithm
+    ${CMAKE_SOURCE_DIR}/modules/range-v3/include/range/v3/detail
+    ${CMAKE_SOURCE_DIR}/modules/range-v3/include/range/v3/experimental
+    ${CMAKE_SOURCE_DIR}/modules/range-v3/include/range/v3/functional
+    ${CMAKE_SOURCE_DIR}/modules/range-v3/include/range/v3/iterator
+    ${CMAKE_SOURCE_DIR}/modules/range-v3/include/range/v3/range
+    ${CMAKE_SOURCE_DIR}/modules/range-v3/include/range/v3/utility
+    ${CMAKE_SOURCE_DIR}/modules/range-v3/include/range/v3/view
 )
 
 # add custom build compiler flags
