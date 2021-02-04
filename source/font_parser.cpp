@@ -11,8 +11,8 @@
 
 /********************************** Includes *******************************************/
 #include "font_parser.hpp"
-#include <range/v3/view/transform.hpp>
-#include <range/v3/view/filter.hpp>
+#include "range/v3/view/transform.hpp"
+#include "range/v3/view/filter.hpp"
 #include <iostream>
 #include <string>
 
@@ -21,8 +21,8 @@ namespace fonts
 {
 
 expected<font, std::string> parse(const std::istream& stream) {
-    std::string data(std::istreambuf_iterator<char>{stream}, std::istreambuf_iterator<char>{});
-    std::cout << data;
+    //std::string data(std::istreambuf_iterator<char>{stream}, std::istreambuf_iterator<char>{});
+    //std::cout << data;
     return expected<fonts::font, std::string>::error("blargh");
 }
 

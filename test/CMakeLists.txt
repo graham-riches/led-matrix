@@ -41,9 +41,11 @@ include_directories(
 	${PARENT_DIR}/modules/rpi-rgb-led-matrix/include
     ${PARENT_DIR}/modules/rpi-rgb-led-matrix/lib
     ${PARENT_DIR}/modules/json/include
-    ${CMAKE_SOURCE_DIR}/modules/range-v3/include
+    ${PARENT_DIR}/modules/range-v3/include
     ${CMAKE_SOURCE_DIR}/googletest/googletest/include
 )
 
-# add submodules
+# add submodules: Note: the submodule include here is a bit of a hack
 add_subdirectory(${CMAKE_SOURCE_DIR}/googletest)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../modules/range-v3 ${CMAKE_CURRENT_BINARY_DIR}/range-v3)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../modules/json ${CMAKE_CURRENT_BINARY_DIR}/json)
