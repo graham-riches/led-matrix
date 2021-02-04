@@ -16,7 +16,7 @@
 #include <map>
 #include <string>
 #include <vector>
-#include <sstream>
+#include <istream>
 #include "expected.hpp"
 
 namespace fonts
@@ -77,7 +77,7 @@ class font {
  * \param stream the stream containing the data
  * \retval excpected<font, std::string> 
  */
-expected<font, std::string> parse(const std::stringstream& stream);
+expected<font, std::string> parse(const std::istream& stream);
 
 
 

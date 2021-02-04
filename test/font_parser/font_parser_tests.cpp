@@ -17,11 +17,25 @@
 #include <string>
 #include <exception>
 #include <sstream>
+#include <fstream>
 
+
+/****************************** Test Fixtures ***********************************/
+class font_parser_tests : public ::testing::Test {
+    public:
+    void SetUp() override {
+        input_stream = std::fstream{"4x6.bdf"};
+    };
+
+    void TearDown() override {
+
+    };
+
+    std::fstream input_stream;
+    
+};
 
 /****************************** Unit Tests ***********************************/
-TEST(font_parser_tests, test_empty_stream_returns_error) {
-    std::stringstream input;
-    auto font = fonts::parse(input);
-    ASSERT_FALSE( font );
+TEST_F(font_parser_tests, test_empty_stream_returns_error) {    
+    auto font = fonts::parse(input_stream);
 }

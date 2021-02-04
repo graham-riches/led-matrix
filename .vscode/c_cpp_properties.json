@@ -1,0 +1,13 @@
+{
+    "env": {
+      "myDefaultIncludePath": [
+        "${workspaceFolder}", 
+        "${workspaceFolder}/source",
+        "${workspaceFolder}/modules/range-v3/include",
+        "${workspaceFolder}/modules/json/include",
+        "${workspaceFolder}/modules/rpi-rgb-led-matrix/include",
+        "${workspaceFolder}/test/googletest/googletest/include", 
+    ]      
+    },
+    "version": 4
+  }
