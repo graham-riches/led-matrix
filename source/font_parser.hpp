@@ -77,9 +77,15 @@ class font {
  * \param stream the stream containing the data
  * \retval excpected<font, std::string> 
  */
-expected<font, std::string> parse(const std::istream& stream);
+expected<font, std::string> parse(std::istream& stream);
 
-
+/**
+ * \brief convert a vector of lines into a character structure
+ * 
+ * \param encoding character encoded as a string
+ * \retval expected<character, std::string> expected of character or an error
+ */
+expected<character, std::string> to_character(const std::string &encoding);
 
 
 };  // namespace fonts
