@@ -35,9 +35,8 @@ expected<font, std::string> parse(std::istream& stream) {
 
 
 expected<character, std::string> to_character(const std::string& encoding) {
-    std::string temp{"I'm a big dumb string that needs to be split"};
-    //auto s = temp | ranges::views::split(" ");
-    std::string s = temp | ranges::views::transform(tolower);
+    std::string temp{"I'm a big dumb string that needs to be split"};    
+    auto s = temp | ranges::views::transform(tolower);
     std::cout << s;
     return expected<character, std::string>::error("error");
 }
