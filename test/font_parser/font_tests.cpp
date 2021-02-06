@@ -93,7 +93,62 @@ TEST_F(font_tests, test_character_parser_returns_character) {
         "ENDCHAR\n";
 
     auto maybe_character = fonts::to_character(encoding);
-    if (!maybe_character) {
-        std::cout << maybe_character.get_error() << std::endl;
-    }
+    ASSERT_TRUE(maybe_character);
+}
+
+TEST_F(font_tests, test_character_parser_bitmap_too_short_fails) {
+    const char* encoding = 
+        "STARTCHAR space\n"
+        "ENCODING 32\n"
+        "SWIDTH 640 0\n"
+        "DWIDTH 4 0\n"
+        "BBX 4 6 0 -1\n"
+        "BITMAP\n"
+        "00\n"
+        "00\n"
+        "00\n"
+        "00\n"        
+        "00\n"
+        "ENDCHAR\n";
+
+    auto maybe_character = fonts::to_character(encoding);
+    ASSERT_FALSE(maybe_character);
+}
+
+TEST_F(font_tests, test_character_parser_missing_bbox_fails) {
+    const char* encoding = 
+        "STARTCHAR space\n"
+        "ENCODING 32\n"
+        "SWIDTH 640 0\n"
+        "DWIDTH 4 0\n"        
+        "BITMAP\n"
+        "00\n"
+        "00\n"
+        "00\n"
+        "00\n"        
+        "00\n"
+        "00\n"
+        "ENDCHAR\n";
+
+    auto maybe_character = fonts::to_character(encoding);
+    ASSERT_FALSE(maybe_character);
+}
+
+TEST_F(font_tests, test_character_parser_missing_encoding_fails) {
+    const char* encoding = 
+        "STARTCHAR space\n"        
+        "SWIDTH 640 0\n"
+        "DWIDTH 4 0\n" 
+        "BBX 4 6 0 -1\n"       
+        "BITMAP\n"
+        "00\n"
+        "00\n"
+        "00\n"
+        "00\n"        
+        "00\n"
+        "00\n"
+        "ENDCHAR\n";
+
+    auto maybe_character = fonts::to_character(encoding);
+    ASSERT_FALSE(maybe_character);
 }
