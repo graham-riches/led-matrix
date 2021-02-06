@@ -68,6 +68,13 @@ TEST_F(font_tests, test_bounding_box_missing_key_fails) {
     ASSERT_FALSE(maybe_box);
 }
 
+/* test creating a bounding box with an invalid tag fails */
+TEST_F(font_tests, test_create_bounding_box_invalid_key_fails) {
+    std::string_view view{"WRONG_TAG 4 6 0 -1"};
+    auto maybe_box = fonts::bounding_box::from_stringview(view);
+    ASSERT_FALSE(maybe_box);
+}
+
 /* test parsing a string character encoding into a character object works if the string is valid */
 TEST_F(font_tests, test_character_parser_returns_character) {
     const char* encoding = 
@@ -85,5 +92,8 @@ TEST_F(font_tests, test_character_parser_returns_character) {
         "00\n"
         "ENDCHAR\n";
 
-    auto character = fonts::to_character(encoding);
+    auto maybe_character = fonts::to_character(encoding);
+    if (!maybe_character) {
+        std::cout << maybe_character.get_error() << std::endl;
+    }
 }
