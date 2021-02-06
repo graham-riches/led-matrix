@@ -37,11 +37,38 @@ class font_tests : public ::testing::Test {
 };
 
 /****************************** Unit Tests ***********************************/
+/* test that parsing an invalid font file stream returns an error */
 TEST_F(font_tests, test_empty_stream_returns_error) {    
     auto font = fonts::parse(input_stream);
 }
 
+/* test creating a font bounding box from a stringview object works */
+TEST_F(font_tests, test_bounding_box_from_stringview_works) {
+    std::string_view view{"BBX 4 6 0 -1"};
+    auto maybe_box = fonts::bounding_box::from_stringview(view);
+    ASSERT_TRUE(maybe_box);
+    auto box = maybe_box.get_value();
+    ASSERT_EQ(4, box.width);
+    ASSERT_EQ(6, box.height);
+    ASSERT_EQ(0, box.x_origin);
+    ASSERT_EQ(-1, box.y_origin);
+}
 
+/* test bounding box missing an argument fails */
+TEST_F(font_tests, test_bounding_box_not_enough_arguments_fails) {
+    std::string_view view{"BBX 4 6 0"};
+    auto maybe_box = fonts::bounding_box::from_stringview(view);
+    ASSERT_FALSE(maybe_box);
+}
+
+/* test creating a bounding box without the BBX tag fails */
+TEST_F(font_tests, test_bounding_box_missing_key_fails) {
+    std::string_view view{"4 6 0 -1"};
+    auto maybe_box = fonts::bounding_box::from_stringview(view);
+    ASSERT_FALSE(maybe_box);
+}
+
+/* test parsing a string character encoding into a character object works if the string is valid */
 TEST_F(font_tests, test_character_parser_returns_character) {
     const char* encoding = 
         "STARTCHAR space\n"

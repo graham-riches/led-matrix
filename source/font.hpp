@@ -12,12 +12,13 @@
 #pragma once
 
 /********************************** Includes *******************************************/
+#include "expected.hpp"
 #include <cstdint>
+#include <istream>
 #include <map>
 #include <string>
+#include <utility>
 #include <vector>
-#include <istream>
-#include "expected.hpp"
 
 namespace fonts
 {
@@ -26,10 +27,27 @@ namespace fonts
  * \brief structure that contains the bounding box information for a font or glyph     
  */
 struct bounding_box {
-    uint8_t width;     //!< width of the box
-    uint8_t height;    //!< height of the box
-    uint8_t x_origin;  //!< x-coordinate of the box origin
-    uint8_t y_origin;  //!< y-coordinate of the box origin
+    int8_t width;     //!< width of the box
+    int8_t height;    //!< height of the box
+    int8_t x_origin;  //!< x-coordinate of the box origin
+    int8_t y_origin;  //!< y-coordinate of the box origin
+
+    /**
+     * \brief bounding box constructor from raw integer values
+     */
+    bounding_box(int8_t width, int8_t height, int8_t x_origin, int8_t y_origin)
+        : width(width)
+        , height(height)
+        , x_origin(x_origin)
+        , y_origin(y_origin) { }
+
+    /**
+     * \brief factor method to create a bounding box object from a string view
+     * 
+     * \param view the string view to create the box from
+     * \retval bounding_box bounding box object
+     */
+    static expected<bounding_box, std::string> from_stringview(const std::string_view& view);
 };
 
 /**
@@ -48,11 +66,11 @@ struct properties {
  * \brief structure representing a bdf encoded font character
  */
 struct character {
-    uint8_t encoding;              //!< ASCII decimal code value of the character
-    uint16_t scalable_width;       //!< scalable width for DPI scaling
-    uint16_t device_width;         //!< offset to the start of the next character in X
-    bounding_box b_box;            //!< the bounding box for the character
-    std::vector<uint32_t> bitmap;  //!< bitmap of character pixel encodings stored as right aligned hex numbers
+    uint8_t encoding;                              //!< ASCII decimal code value of the character
+    std::pair<uint16_t, uint16_t> scalable_width;  //!< scalable width for DPI scaling
+    std::pair<uint8_t, uint8_t> device_width;      //!< offset to the start of the next character in X
+    bounding_box b_box;                            //!< the bounding box for the character
+    std::vector<uint32_t> bitmap;                  //!< bitmap of character pixel encodings stored as right aligned hex numbers
 };
 
 /**
@@ -62,12 +80,10 @@ struct character {
  */
 class font {
   public:
-    
   private:
     properties _properties;
-    std::map<int, character> _characters; //!< maps ascii character values to the character object
+    std::map<int, character> _characters;  //!< maps ascii character values to the character object
 };
-
 
 /********************************** Function Definitions *******************************************/
 /**
@@ -84,7 +100,6 @@ expected<font, std::string> parse(std::istream& stream);
  * \param encoding character encoded as a string
  * \retval expected<character, std::string> expected of character or an error
  */
-expected<character, std::string> to_character(const std::string &encoding);
-
+expected<character, std::string> to_character(const std::string& encoding);
 
 };  // namespace fonts
