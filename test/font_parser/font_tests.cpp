@@ -13,7 +13,7 @@
 /********************************** Includes *******************************************/
 #include "gtest/gtest.h"
 #include "expected.hpp"
-#include "font_parser.hpp"
+#include "font.hpp"
 #include <string>
 #include <exception>
 #include <sstream>
@@ -22,7 +22,7 @@
 
 
 /****************************** Test Fixtures ***********************************/
-class font_parser_tests : public ::testing::Test {
+class font_tests : public ::testing::Test {
     public:
     void SetUp() override {
         input_stream = std::ifstream{"../font_parser/4x6.bdf"};
@@ -37,12 +37,12 @@ class font_parser_tests : public ::testing::Test {
 };
 
 /****************************** Unit Tests ***********************************/
-TEST_F(font_parser_tests, test_empty_stream_returns_error) {    
+TEST_F(font_tests, test_empty_stream_returns_error) {    
     auto font = fonts::parse(input_stream);
 }
 
 
-TEST_F(font_parser_tests, test_character_parser_returns_character) {
+TEST_F(font_tests, test_character_parser_returns_character) {
     const char* encoding = 
         "STARTCHAR space\n"
         "ENCODING 32\n"

@@ -1,5 +1,5 @@
 /**
- * \file font_parser.hpp
+ * \file font.hpp
  * \author Graham Riches (graham.riches@live.com)
  * \brief bdf font file parser
  * \version 0.1
@@ -63,10 +63,9 @@ struct character {
 class font {
   public:
     
-
   private:
     properties _properties;
-    std::map<char, character> _characters;
+    std::map<int, character> _characters; //!< maps ascii character values to the character object
 };
 
 

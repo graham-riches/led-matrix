@@ -25,10 +25,10 @@ set(SOURCES
 	# add unit tests here
     ${CMAKE_SOURCE_DIR}/main.cpp
     ${CMAKE_SOURCE_DIR}/expected/expected_tests.cpp
-    ${CMAKE_SOURCE_DIR}/font_parser/font_parser_tests.cpp
+    ${CMAKE_SOURCE_DIR}/font_parser/font_tests.cpp
 
     # add source files here
-    ${PARENT_DIR}/source/font_parser.cpp
+    ${PARENT_DIR}/source/font.cpp
 	)
 
 add_executable(${BINARY} ${SOURCES})
