@@ -18,13 +18,15 @@
 #include <vector>
 
 /****************************** Function Definitions ***********************************/
+namespace string_helpers
+{
 /**
  * \brief convert a filename to an open filestream
  * \param filename
  * \return
 */
-std::ifstream open_file( const std::string &filename ) {
-    return std::ifstream{ filename };
+inline std::ifstream open_file(const std::string& filename) {
+    return std::ifstream{filename};
 }
 
 /**
@@ -32,11 +34,11 @@ std::ifstream open_file( const std::string &filename ) {
  * \param stream
  * \return
 */
-std::vector<std::string> read_file( std::ifstream &&stream ) {
+inline std::vector<std::string> read_file(std::ifstream&& stream) {
     std::vector<std::string> data;
     std::string line;
-    while ( std::getline( stream, line ) ) {
-        data.push_back( line );
+    while ( std::getline(stream, line) ) {
+        data.push_back(line);
     }
     return data;
 }
@@ -47,14 +49,14 @@ std::vector<std::string> read_file( std::ifstream &&stream ) {
  * \param substring substring delimiter
  * \return 
 */
-std::vector<std::string> split( std::string &input, const std::string &delimiter ) {
+inline std::vector<std::string> split(std::string& input, const std::string& delimiter) {
     std::vector<std::string> list;
     size_t substring_pos = std::string::npos;
-    while ( ( substring_pos = input.find( delimiter ) ) != std::string::npos ) {
-        list.push_back( input.substr( 0, substring_pos ) );
-        input.erase( 0, substring_pos + delimiter.length( ) );
+    while ( (substring_pos = input.find(delimiter)) != std::string::npos ) {
+        list.push_back(input.substr(0, substring_pos));
+        input.erase(0, substring_pos + delimiter.length());
     }
-    list.push_back( input.substr( 0, input.length( ) ) );
+    list.push_back(input.substr(0, input.length()));
     return list;
 }
 
@@ -64,10 +66,11 @@ std::vector<std::string> split( std::string &input, const std::string &delimiter
  * \param substring 
  * \return 
 */
-inline std::string &strip( std::string &input, const std::string &substring ) {
+inline std::string& strip(std::string& input, const std::string& substring) {
     size_t substring_pos = std::string::npos;
-    while ( ( substring_pos = input.find( substring ) ) != std::string::npos ) {
-        input.erase( substring_pos, substring.length( ) );
+    while ( (substring_pos = input.find(substring)) != std::string::npos ) {
+        input.erase(substring_pos, substring.length());
     }
     return input;
 }
+};  // namespace string_helpers

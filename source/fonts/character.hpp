@@ -1,9 +1,9 @@
 /**
- * \file font.hpp
+ * \file character.hpp
  * \author Graham Riches (graham.riches@live.com)
- * \brief bdf font file parser
+ * \brief definitions of a character object that is part of a font
  * \version 0.1
- * \date 2021-02-02
+ * \date 2021-02-06
  * 
  * @copyright Copyright (c) 2021
  * 
@@ -33,6 +33,7 @@ struct key_value_pair {
     std::string_view key;
     std::vector<T> values;
 };
+
 
 /**
  * \brief structure that contains the bounding box information for a font or glyph     
@@ -69,23 +70,12 @@ struct bounding_box {
     static expected<bounding_box, std::string> from_key_value_pair(const key_value_pair<int>& kv_pair);
 };
 
-/**
- * \brief structure containing high-level overall font properties
- */
-struct font_properties {
-    std::string foundry;
-    std::string family;
-    std::string weight;
-    uint8_t ascent;
-    uint8_t descent;
-    uint8_t pixel_size;
-};
 
 /**
  * \brief structure of character properties
  */
 struct character_properties {
-    uint8_t encoding;                              //!< ASCII decimal code value of the character
+    uint16_t encoding;                             //!< ASCII decimal code value of the character
     std::pair<uint16_t, uint16_t> scalable_width;  //!< scalable width for DPI scaling
     std::pair<uint8_t, uint8_t> device_width;      //!< offset to the start of the next character in X
     bounding_box b_box;                            //!< the bounding box for the character
@@ -98,7 +88,7 @@ struct character_properties {
      * \param d_width device width pair (x offset, and y offset)
      * \param b_box bounding box
      */
-    character_properties(const uint8_t& encoding, const std::pair<uint16_t, uint16_t>& s_width, const std::pair<uint8_t, uint8_t>& d_width, const bounding_box& b_box )
+    character_properties(const uint16_t& encoding, const std::pair<uint16_t, uint16_t>& s_width, const std::pair<uint8_t, uint8_t>& d_width, const bounding_box& b_box )
     : encoding(encoding)
     , scalable_width(s_width)
     , device_width(d_width)
@@ -112,6 +102,7 @@ struct character_properties {
      */
     static expected<character_properties, std::string> from_map(const std::map<std::string_view, std::vector<int>>& map);
 };
+
 
 /**
  * \brief structure representing a bdf encoded font character
@@ -129,35 +120,13 @@ struct character {
     character(character_properties&& properties, std::vector<uint32_t>&& bitmap)
     : properties(std::move(properties))
     , bitmap(std::move(bitmap)) {};
+
+    /**
+     * \brief convert a vector of lines into a character structure
+     * 
+     * \param encoding character encoded as a string
+     * \retval expected<character, std::string> expected of character or an error
+     */
+    static expected<character, std::string> from_string(const std::string& encoding);    
 };
-
-/**
- * \brief font object that contains the character encoding for each ascii character in it's binary
- *        encoded equivalent. This provides functions to transform char and string inputs into pixel
- *        mappings.
- */
-class font {
-  public:
-  private:
-    font_properties _properties;
-    std::map<int, character> _characters;  //!< maps ascii character values to the character object
-};
-
-/********************************** Function Definitions *******************************************/
-/**
- * \brief parse a stream of data that is stored as a stream
- * 
- * \param stream the stream containing the data
- * \retval excpected<font, std::string> 
- */
-expected<font, std::string> parse(std::istream& stream);
-
-/**
- * \brief convert a vector of lines into a character structure
- * 
- * \param encoding character encoded as a string
- * \retval expected<character, std::string> expected of character or an error
- */
-expected<character, std::string> to_character(const std::string& encoding);
-
 };  // namespace fonts

@@ -1,13 +1,14 @@
 /**
- * \file font.cpp
+ * \file character.cpp
  * \author Graham Riches (graham.riches@live.com)
- * \brief 
+ * \brief method declarations for character objects
  * \version 0.1
- * \date 2021-02-03
+ * \date 2021-02-06
  * 
  * @copyright Copyright (c) 2021
  * 
  */
+
 
 /********************************** Includes *******************************************/
 #include "font.hpp"
@@ -40,6 +41,7 @@ T stringview_to_int(const std::string_view& view, int base = 10) {
     return value;
 }
 
+
 /**
  * \brief convert a stringview into a keyvalue pair containing integers
  * 
@@ -57,6 +59,7 @@ key_value_pair<int> to_property_kv_pair(const std::string_view& view) {
     return key_value_pair<int>{tokens[0], values};
 }
 
+
 /**
  * \brief converts a vector of keyvalue pair objects into a std::map
  * 
@@ -71,6 +74,7 @@ std::map<std::string_view, std::vector<int>> kv_pairs_to_map(const std::vector<k
     return map;
 }
 
+
 /********************************** Public Function Definitions *******************************************/
 /**
  * \brief factor method to create a bounding box object from a string view
@@ -82,6 +86,7 @@ expected<bounding_box, std::string> bounding_box::from_stringview(const std::str
     key_value_pair<int> kv_pair = to_property_kv_pair(view);    
     return bounding_box::from_key_value_pair(kv_pair);
 }
+
 
 /**
  * \brief factory method to create a bounding box from a key_value pair object
@@ -98,6 +103,7 @@ expected<bounding_box, std::string> bounding_box::from_key_value_pair(const key_
         return expected<bounding_box, std::string>::success(bounding_box(kv_pair.values[0], kv_pair.values[1], kv_pair.values[2], kv_pair.values[3]));
     }
 }
+
 
 /**
  * \brief factory method to create a character properties structure from a map
@@ -126,31 +132,18 @@ expected<character_properties, std::string> character_properties::from_map(const
 
 
 /**
- * \brief parse a stream of data that is stored as a stream
- * 
- * \param stream the stream containing the data
- * \retval excpected<font, std::string> 
- */
-expected<font, std::string> parse(std::istream& stream) {
-    std::stringstream buffer;
-    buffer << stream.rdbuf();
-    std::string font_data = buffer.str();
-
-    return expected<fonts::font, std::string>::error("blargh");
-}
-
-/**
  * \brief convert a vector of lines into a character structure
  * 
  * \param encoding character encoded as a string
  * \retval expected<character, std::string> expected of character or an error
  */
-expected<character, std::string> to_character(const std::string& encoding) {    
+expected<character, std::string> character::from_string(const std::string& encoding) {    
     //!< splits the string by endlines, converts to string views, and splits into two ranges containing: properties, character bitmapping
     auto properties = encoding | ranges::views::split('\n')
                                | ranges::views::transform([](auto&& range) { return std::string_view(&*range.begin(), ranges::distance(range)); })
-                               | ranges::views::filter([](auto &&line){ return line != "ENDCHAR";})
-                               | ranges::views::filter([](auto &&line){ return line.find(std::string_view{"STARTCHAR"}) == line.npos; })
+                               | ranges::views::filter([](auto&& line){ return line != "ENDCHAR";})
+                               | ranges::views::filter([](auto&& line){ return line.find(std::string_view{"STARTCHAR"}) == line.npos; })
+                               | ranges::views::filter([](auto&& line){ return line != "";})
                                | ranges::views::split("BITMAP")
                                | ranges::views::transform([](auto&& range){return range | ranges::to_vector; })
                                | ranges::to_vector;
@@ -172,7 +165,6 @@ expected<character, std::string> to_character(const std::string& encoding) {
     //!< extract the properties struct from the expected
     auto c_properties = maybe_properties.get_value();
 
-    
     //!< parse the bitmap character encoding
     auto bit_encoding = properties[1] | ranges::views::transform([](auto &&view){return stringview_to_int<uint32_t>(view, INTEGER_HEX_BASE);})                                            
                                       | ranges::to_vector;
@@ -185,5 +177,4 @@ expected<character, std::string> to_character(const std::string& encoding) {
     //!< return the character object
     return expected<character, std::string>::success(character{std::move(c_properties), std::move(bit_encoding)});
 }
-
 };  // namespace fonts

@@ -28,7 +28,8 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/font_parser/font_tests.cpp
 
     # add source files here
-    ${PARENT_DIR}/source/font.cpp
+    ${PARENT_DIR}/source/fonts/font.cpp
+    ${PARENT_DIR}/source/fonts/character.cpp
 	)
 
 add_executable(${BINARY} ${SOURCES})
@@ -38,6 +39,9 @@ add_test(NAME ${BINARY} COMMAND ${BINARY})
 # set the include directories for the project
 include_directories(
     ${PARENT_DIR}/source
+    ${PARENT_DIR}/source/reactive
+    ${PARENT_DIR}/source/fonts
+    ${PARENT_DIR}/source/io
 	${PARENT_DIR}/modules/rpi-rgb-led-matrix/include
     ${PARENT_DIR}/modules/rpi-rgb-led-matrix/lib
     ${PARENT_DIR}/modules/json/include
