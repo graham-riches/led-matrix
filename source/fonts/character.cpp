@@ -95,13 +95,9 @@ expected<bounding_box, std::string> bounding_box::from_stringview(const std::str
  * \retval expected<bounding_box, std::string> bounding box object if no errors, otherwise error string
  */
 expected<bounding_box, std::string> bounding_box::from_key_value_pair(const key_value_pair<int>& kv_pair) {
-    if ( kv_pair.key != "BBX" ) {
-        return expected<bounding_box, std::string>::error("Invalid key for constructor");
-    } else if ( kv_pair.values.size() != 4 ) {
-        return expected<bounding_box, std::string>::error("BoundingBox: not enough arguments supplied");
-    } else {
-        return expected<bounding_box, std::string>::success(bounding_box(kv_pair.values[0], kv_pair.values[1], kv_pair.values[2], kv_pair.values[3]));
-    }
+    return (kv_pair.key != "BBX") ? expected<bounding_box, std::string>::error("Invalid key for constructor")
+         : (kv_pair.values.size() != 4) ? expected<bounding_box, std::string>::error("BoundingBox: not enough arguments supplied")
+         : expected<bounding_box, std::string>::success(bounding_box(kv_pair.values[0], kv_pair.values[1], kv_pair.values[2], kv_pair.values[3]));         
 }
 
 
@@ -122,7 +118,7 @@ expected<character_properties, std::string> character_properties::from_map(const
         if (!maybe_b_box) {
             return expected<character_properties, std::string>::error(maybe_b_box.get_error());
         }
-
+        
         character_properties properties(encoding, scalable_width, device_width, maybe_b_box.get_value());
         return expected<character_properties, std::string>::success(std::move(properties));
     } catch (...) {

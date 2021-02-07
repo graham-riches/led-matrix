@@ -18,6 +18,8 @@
 #include <sstream>
 #include <string>
 #include <charconv>
+#include <algorithm>
+
 
 /********************************** Constants *******************************************/
 #define INTEGER_HEX_BASE (16ul)
@@ -36,6 +38,31 @@ font::font(const std::vector<character>& characters) {
     }
 }
 
+
+/**
+ * \brief Get a character by its encoding value
+ * 
+ * \param encoding the ASCII encoding of the character
+ * \retval expected<character, std::string> maybe character
+ */
+expected<character, std::string> font::get_character(const uint16_t encoding) {
+    try {
+        return expected<character, std::string>::success(_characters.at(encoding));
+    } catch (...) {
+        return expected<character, std::string>::error("Could not find character encoding");
+    }
+}
+
+
+/**
+ * \brief Get a character from its char equivalent encoding
+ * 
+ * \param encoding the char equivalent encoding
+ * \retval expected<character, std::string> maybe character
+ */
+expected<character, std::string> font::get_character(const char encoding) {
+    return this->get_character(static_cast<uint16_t>(encoding));
+}
 
 /**
  * \brief parse a stream of data that is stored as a stream
@@ -60,11 +87,39 @@ expected<font, std::string> font::from_stream(std::istream& stream) {
                                         | ranges::to_vector;
 
     //!< return either the parsed font or an error
-    if (characters.size() > 0) {
-        return expected<fonts::font, std::string>::success(font(characters));
-    } else {
-        return expected<fonts::font, std::string>::error("No characters found for font");
-    }                                  
+    return (characters.size() > 0) ? expected<fonts::font, std::string>::success(font(characters))
+         : expected<fonts::font, std::string>::error("No characters found for font");    
+}
+
+
+/**
+ * \brief encode a string as a vector of bitmapped characters
+ * 
+ * \param message the message string
+ * \retval maybe of vector of characters or error
+ */
+expected<std::vector<character>, std::string> font::encode(const std::string& message) {
+    auto characters = message | ranges::views::transform([this](auto&& c){return get_character(c);})
+                              //| ranges::views::filter([](auto&& exp){return (exp) ? true : false; })
+                              | ranges::views::transform([](auto&& exp){return exp.get_value();})
+                              | ranges::to_vector;
+    
+    return (characters.size() != message.size()) ? expected<std::vector<character>, std::string>::error("Encoding one or more tokens failed")
+         : expected<std::vector<character>, std::string>::success(characters);
+}
+
+/**
+ * \brief lookup a string and encode it as character objects. Replace any failed lookups with a default character
+ * 
+ * \param message the message to encode
+ * \param default_character the default character to replace any failed lookups with
+ * \retval std::vector<font::character> 
+ */
+std::vector<character> font::encode_with_default(const std::string& message, const character default_character) {
+    /* perform the lookup, swap any invalid expected types with the default and return as a vector */
+    return message | ranges::views::transform([this](auto&& c){return get_character(c);})
+                   | ranges::views::transform([this, default_character](auto&& exp){ return (exp) ? exp.get_value() : default_character; })
+                   | ranges::to_vector;
 }
 
 };  // namespace fonts
