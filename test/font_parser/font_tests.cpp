@@ -139,3 +139,37 @@ TEST(font_tests, test_character_parser_missing_encoding_fails) {
     auto maybe_character = fonts::character::from_string(encoding);
     ASSERT_FALSE(maybe_character);
 }
+
+TEST(font_tests, test_string_to_vector_of_characters_works) {
+    std::string message{"Hello World"};
+    std::ifstream input_stream{"../font_parser/4x6.bdf"};
+    auto maybe_font = fonts::font::from_stream(input_stream);    
+    auto font = maybe_font.get_value();
+    auto maybe_characters = font.encode(message);
+    auto characters = maybe_characters.get_value();
+    char *message_ptr = message.data();
+    for (const auto& character : characters) {
+        ASSERT_EQ(character.properties.encoding, static_cast<uint16_t>(*message_ptr++));
+    }
+}
+
+TEST(font_tests, test_string_to_vector_of_characters_missing_character_fails) {
+    std::vector<fonts::character> characters;
+    fonts::character_properties properties{32, {0, 0}, {0, 0}, fonts::bounding_box{0, 0, 0, 0}};    
+    characters.push_back(fonts::character{std::move(properties), std::vector<uint32_t>{}});
+    fonts::font font{characters};
+    auto maybe_characters = font.encode("Hello World"); //!< should fail since we only have one character in the font
+    ASSERT_FALSE(maybe_characters);
+}
+
+TEST(font_tests, test_string_to_vector_of_characters_with_default) {
+    std::vector<fonts::character> characters;
+    fonts::character_properties properties{32, {0, 0}, {0, 0}, fonts::bounding_box{0, 0, 0, 0}};
+    fonts::character default_character{std::move(properties), std::vector<uint32_t>{}};
+    characters.push_back(default_character);
+    fonts::font font{characters};
+    auto encoded = font.encode_with_default("Hello World", default_character); //!< all characters should return as default
+    for (const auto& character : encoded) {
+        ASSERT_EQ(32, character.properties.encoding);
+    }
+}

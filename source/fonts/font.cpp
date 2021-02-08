@@ -100,7 +100,7 @@ expected<font, std::string> font::from_stream(std::istream& stream) {
  */
 expected<std::vector<character>, std::string> font::encode(const std::string& message) {
     auto characters = message | ranges::views::transform([this](auto&& c){return get_character(c);})
-                              //| ranges::views::filter([](auto&& exp){return (exp) ? true : false; })
+                              | ranges::views::filter([](auto&& exp){return (exp) ? true : false;})
                               | ranges::views::transform([](auto&& exp){return exp.get_value();})
                               | ranges::to_vector;
     
