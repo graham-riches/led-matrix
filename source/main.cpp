@@ -67,14 +67,10 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
-    /* create the RGB Matrix object from the validated options. Note: wrap the raw pointer returned from the Matrix factory method in a 
-       unique pointer for memory management.
-       TODO: matrix has an internal thread that can't be accessed directly, which is a minor inconvenience as it can't share same threading structure
-             as other application components
-       */
+    /* create the RGB Matrix object from the validated options. */
     auto options = maybe_options.get_value();
     auto matrix = std::unique_ptr<rgb_matrix::RGBMatrix>(rgb_matrix::CreateMatrixFromOptions(options.options, options.runtime_options));
-    matrix->StartRefresh();
+    matrix->StartRefresh();  //!< unfortunately this manages it's own pthread :(
 
     /* create a vector of threads to hold the threads that will do the other application work */
     std::vector<std::thread> threads;
@@ -86,17 +82,12 @@ int main(int argc, char* argv[]) {
     auto io_pipeline = io_service(service) 
                      | transform( [](const std::string& message) { return reactive::mtry([&] { return json::parse(message); }); })
                      | transform( [](const auto& exp) { return mbind(exp, pixel_instruction_from_json); } )
-                     | sink([&matrix](const auto& exp) {
-                           if ( !exp ) {
-                               std::cerr << "Instruction does not contain valid JSON" << std::endl;
-                           } else {
-                               auto instruction = exp.get_value();                               
-                               matrix->SetPixel(instruction.x, instruction.y, instruction.r, instruction.g, instruction.b);
-                           }
-                       });
+                     | filter( [](const auto& exp){ return (exp); } )
+                     | transform( [](const auto& exp){ return exp.get_value(); } )
+                     | sink([&matrix](const auto& instruction) { matrix->SetPixel(instruction.x, instruction.y, instruction.r, instruction.g, instruction.b); });
 
     /* start the IO service */
-    threads.push_back(std::thread{[&service]() { service.run(); }});
+    threads.push_back(std::thread{[&service](){service.run();}});
 
     /* wait for threads to be done their work */
     for ( auto& thread : threads ) {

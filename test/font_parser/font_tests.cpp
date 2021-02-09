@@ -83,6 +83,7 @@ TEST(font_tests, test_character_parser_returns_character) {
     ASSERT_TRUE(maybe_character);
 }
 
+/* test parsing a character that is missing a bitmap line fails */
 TEST(font_tests, test_character_parser_bitmap_too_short_fails) {
     const char* encoding = 
         "STARTCHAR space\n"
@@ -102,6 +103,7 @@ TEST(font_tests, test_character_parser_bitmap_too_short_fails) {
     ASSERT_FALSE(maybe_character);
 }
 
+/* a character encoding with no bounding box should fail */
 TEST(font_tests, test_character_parser_missing_bbox_fails) {
     const char* encoding = 
         "STARTCHAR space\n"
@@ -121,6 +123,7 @@ TEST(font_tests, test_character_parser_missing_bbox_fails) {
     ASSERT_FALSE(maybe_character);
 }
 
+/* a character with no ascii encoding should fail */
 TEST(font_tests, test_character_parser_missing_encoding_fails) {
     const char* encoding = 
         "STARTCHAR space\n"        
@@ -140,6 +143,7 @@ TEST(font_tests, test_character_parser_missing_encoding_fails) {
     ASSERT_FALSE(maybe_character);
 }
 
+/* test converting a string to a vector of characters */
 TEST(font_tests, test_string_to_vector_of_characters_works) {
     std::string message{"Hello World"};
     std::ifstream input_stream{"../font_parser/4x6.bdf"};
@@ -153,6 +157,7 @@ TEST(font_tests, test_string_to_vector_of_characters_works) {
     }
 }
 
+/* string to vector fails if there are missing characters in the font */
 TEST(font_tests, test_string_to_vector_of_characters_missing_character_fails) {
     std::vector<fonts::character> characters;
     fonts::character_properties properties{32, {0, 0}, {0, 0}, fonts::bounding_box{0, 0, 0, 0}};    
@@ -162,6 +167,7 @@ TEST(font_tests, test_string_to_vector_of_characters_missing_character_fails) {
     ASSERT_FALSE(maybe_characters);
 }
 
+/* string to vector works with missing characters provided a suitable default is given */
 TEST(font_tests, test_string_to_vector_of_characters_with_default) {
     std::vector<fonts::character> characters;
     fonts::character_properties properties{32, {0, 0}, {0, 0}, fonts::bounding_box{0, 0, 0, 0}};
