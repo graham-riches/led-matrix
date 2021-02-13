@@ -32,10 +32,10 @@ struct envelope {
 struct shape {
     envelope envelope;
 
-    shape(const envelope& envelope)
+    shape(const graphics::envelope& envelope)
         : envelope(envelope) { }
 
-    shape(envelope&& envelope)
+    shape(graphics::envelope&& envelope)
         : envelope(std::move(envelope)) { }
 
     shape(const shape& other)

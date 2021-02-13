@@ -13,6 +13,7 @@
 #include "led-matrix.h"
 #include "nlohmann/json.hpp"
 #include "reactive.hpp"
+#include "font.hpp"
 #include <boost/asio.hpp>
 #include <chrono>
 #include <cstdint>
@@ -57,7 +58,6 @@ expected_set_pixel pixel_instruction_from_json(const json& data) {
  */
 int main(int argc, char* argv[]) {
     /* open the json configuration file and parse it into an expected ADT which contains either valid JSON or an error message */
-
     json config = json::parse(std::ifstream{"config.json"});
 
     auto maybe_options = create_options_from_json(config);
@@ -88,6 +88,28 @@ int main(int argc, char* argv[]) {
 
     /* start the IO service */
     threads.push_back(std::thread{[&service](){service.run();}});
+
+    /* hack a character onto the screen using a font */
+    auto input_stream = std::ifstream{"graphics/fonts/5x8.bdf"};    
+    auto maybe_font = fonts::font::from_stream(input_stream);    
+    auto font = maybe_font.get_value();
+    auto maybe_characters = font.encode("HELLO WORLD");
+    auto characters = maybe_characters.get_value();
+    uint8_t draw_iterator{0};
+    for (const auto character : characters) {
+        for (int i = 0; i < character.properties.b_box.height; i++) {
+            for (int j = 0; j < character.properties.b_box.width; j++){            
+                if (character.bitmap[i] & (0x80 >> j)){
+                    auto offset = character.properties.b_box.width * draw_iterator;
+                    matrix->SetPixel(offset + j, i, 255, 0, 0);    
+                }                        
+            }
+        }
+        draw_iterator++;
+    }        
+    
+
+
 
     /* wait for threads to be done their work */
     for ( auto& thread : threads ) {

@@ -109,7 +109,7 @@ struct character_properties {
  */
 struct character {
     character_properties properties; //!< character properties structure 
-    std::vector<uint32_t> bitmap;    //!< bitmap of character pixel encodings stored as right aligned hex numbers
+    std::vector<uint32_t> bitmap;    //!< bitmap of character pixel encodings stored as left aligned hex numbers
 
     /**
      * \brief Construct a new character object from a properties struct and a bitmap
