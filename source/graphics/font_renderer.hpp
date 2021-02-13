@@ -16,31 +16,38 @@
 /********************************** Includes *******************************************/
 #include "font.hpp"
 #include "primatives.hpp"
+#include <vector>
 
 
 namespace graphics
 {
-
-class font_renderer : public shape {
-  public:
+/********************************** Types *******************************************/
+/**
+ * \brief shape type that handles drawing bitmapped fonts
+ */
+struct font_renderer : public shape {  
     /**
      * \brief Construct a new font renderer object
      * 
-     * \param font the font object that contains the character encodings
-     * \param envelope envelope object that provides the graphics framework with an idea of how much space each
-     *                 font character will occupy
+     * \param characters vector of characters to render
+     * \param origin location to draw the 
      */
-    font_renderer(const fonts::font& font, const envelope& envelope);
+    font_renderer(const std::vector<fonts::character>& characters, graphics::origin origin);
 
     /**
-     * \brief draw function that satisfies the shape interface (bad naming alert)
+     * \brief render a sequence of characters on the screen
      * 
-     * \param origin origin to draw the object at
+     * \param previous_frame existing frame canvas
+     * \param red text color red channel
+     * \param green text color green channel
+     * \param blue text color blue channel
+     * \param alpha text alpha: default is solid
+     * \retval frame new frame
      */
-    void draw(origin origin);
+    frame draw(const frame& previous_frame, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha=1.0);
 
-  private:
-    fonts::font _font;
+
+    std::vector<fonts::character> characters;
 };
 
 };  // namespace graphics
