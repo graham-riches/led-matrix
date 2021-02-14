@@ -7,6 +7,8 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/source/config_parser.cpp
     ${CMAKE_SOURCE_DIR}/source/fonts/font.cpp
     ${CMAKE_SOURCE_DIR}/source/fonts/character.cpp
+    ${CMAKE_SOURCE_DIR}/source/graphics/primatives.cpp
+    ${CMAKE_SOURCE_DIR}/source/graphics/font_renderer.cpp
     )
 
 # create the executable

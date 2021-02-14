@@ -16,35 +16,26 @@ namespace graphics
 {
 /********************************** Function Definitions *******************************************/
 /**
- * \brief Construct a new frame object
+ * \brief Construct a new frame object from a led matrix canvas pointer
  * 
- * \param height height of the frame in pixels
- * \param width width of the frame in pixels
+ * \param canvas pointer to the canvas
  */
-frame::frame(int height, int width)
-: _width(width)
-, _height(height)
-, _pixels(std::vector<std::vector<pixel>>(height, std::vector<pixel>(width))) { }
-
-/**
- * \brief Construct a new frame::frame object from a copy
- * 
- * \param other to copy from
- */
-frame::frame(const frame& other) {
-    _pixels = other._pixels;
+frame::frame(rgb_matrix::Canvas* canvas)
+: _canvas(canvas) {
+    _height = canvas->height();
+    _width = canvas->width();
 }
 
 /**
  * \brief set the value of a pixel in the frame from a reference pixel
  * 
- * \param row row to set at
- * \param column column to set at
+ * \param x coordinate to set at
+ * \param y coordinate to set at
  * \param pixel the pixel to set
  */
-void frame::set_pixel(int row, int column, const pixel& pixel) {
-    if ((row < _height) && (column < _width)) {
-        _pixels[row][column] = pixel;
+void frame::set_pixel(int x, int y, const pixel& pixel) {
+    if ((x < _width) && (y < _height)) {
+        _canvas->SetPixel(x, y, pixel.red, pixel.green, pixel.blue);
     }
 }
 

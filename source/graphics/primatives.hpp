@@ -15,6 +15,7 @@
 #include <cstdint>
 #include <utility>
 #include <vector>
+#include "canvas.h"
 
 namespace graphics
 {
@@ -30,13 +31,12 @@ struct origin {
 };
 
 /**
- * \brief structure containing the color RGBA value of a pixel
+ * \brief structure containing the color RGB value of a pixel
  */
 struct pixel {
     uint8_t red;
     uint8_t green;
-    uint8_t blue;
-    uint8_t alpha;
+    uint8_t blue;    
 };
 
 /**
@@ -44,20 +44,40 @@ struct pixel {
  */
 class frame {
   public:
-    frame(int height, int width);
+    /**
+     * \brief Construct a new frame object from a led matrix canvas pointer
+     * 
+     * \param canvas pointer to the canvas
+     */
+    frame(rgb_matrix::Canvas* canvas);
 
-    frame(const frame& other);
+    /**
+     * \brief Set a pixel value in the frame to the RGBA values in the pixel argument
+     * 
+     * \param x coordinate to set at
+     * \param y coordinate to set at
+     * \param pixel color information to set
+     */
+    void set_pixel(int x, int y, const pixel& pixel);
 
-    void set_pixel(int row, int column, const pixel& pixel);
-
+    /**
+     * \brief Get the width of the frame
+     * 
+     * \retval width as an integer
+     */
     int get_width(void) const;
 
+    /**
+     * \brief Get the height of the frame
+     * 
+     * \retval height as an integer
+     */
     int get_height(void) const;
 
-  private:
-    std::vector<std::vector<pixel>> _pixels;
+  private:    
     int _width;
     int _height;
+    rgb_matrix::Canvas* _canvas;
 };
 
 /**

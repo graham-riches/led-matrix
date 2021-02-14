@@ -32,10 +32,9 @@ struct font_renderer : public shape {
      * \param origin origin to render at
      * \param red R color channel
      * \param green G color channel
-     * \param blue B color channel
-     * \param alpha A color channel
+     * \param blue B color channel     
      */
-    font_renderer(const std::vector<fonts::character>& characters, graphics::origin origin, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha = 1.0);
+    font_renderer(const std::vector<fonts::character>& characters, graphics::origin origin, uint8_t red, uint8_t green, uint8_t blue);
 
     /**
      * \brief render a sequence of characters on the screen

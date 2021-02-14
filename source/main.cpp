@@ -14,6 +14,7 @@
 #include "nlohmann/json.hpp"
 #include "reactive.hpp"
 #include "font.hpp"
+#include "graphics.hpp"
 #include <boost/asio.hpp>
 #include <chrono>
 #include <cstdint>
@@ -65,26 +66,28 @@ int main(int argc, char* argv[]) {
     if ( !maybe_options ) {        
         std::cout << maybe_options.get_error() << std::endl;
         return -1;
-    }
-
-    //!< extract the options from the expected
+    }    
     auto options = maybe_options.get_value();
-
-
+    
     //!< load the main application font bdf from the configuration
-    auto maybe_font = fonts::font::from_stream(std::ifstream{"graphics/fonts" + options.app_options.font});
+    auto maybe_font = fonts::font::from_stream(std::ifstream{std::string{"graphics/fonts/"} + options.app_options.font});
     if (!maybe_font) {
         std::cout << maybe_font.get_error() << std::endl;
         return -1;
     }
-
     auto font = maybe_font.get_value();
-    auto characters = font.encode_with_default("HELLO WORLD", ' ');
-
+    
 
     //!< create the RGB Matrix object from the validated options.    
     auto matrix = std::unique_ptr<rgb_matrix::RGBMatrix>(rgb_matrix::CreateMatrixFromOptions(options.options, options.runtime_options));
     matrix->StartRefresh();  //!< unfortunately this manages it's own pthread :(
+
+    //!< test encode a string to render    
+    auto characters = font.encode_with_default("HELLO WORLD", ' ');
+    auto frame = graphics::frame(matrix.get());
+    auto font_drawer = graphics::font_renderer(characters, graphics::origin{0, 0}, 255, 0, 0);
+    font_drawer.draw(frame);
+
 
     //!< create a vector of threads to hold the threads that will do the other application work
     std::vector<std::thread> threads;

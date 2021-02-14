@@ -20,13 +20,16 @@ namespace graphics
 /**
  * \brief Construct a new font renderer object
  * 
- * \param characters vector of characters to render
- * \param origin location to draw the 
+ * \param characters characters to render
+ * \param origin origin to render at
+ * \param red R color channel
+ * \param green G color channel
+ * \param blue B color channel     
  */
-font_renderer::font_renderer(const std::vector<fonts::character>& characters, graphics::origin origin, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
+font_renderer::font_renderer(const std::vector<fonts::character>& characters, graphics::origin origin, uint8_t red, uint8_t green, uint8_t blue)
 : shape(origin)
 , characters(characters)
-, color(pixel{red, green, blue, alpha}) {}
+, color(pixel{red, green, blue}) {}
 
 /**
  * \brief render a sequence of characters on the screen
@@ -43,18 +46,20 @@ frame& font_renderer::draw(frame& canvas) {
         //!< get the current character
         auto character = characters[character_count];
 
-        for (int i = 0; i < character.properties.b_box.height; i++) {
-            //!< get the bit alignment of the font data within the character encoding
-            uint32_t pixel_alignment = (character.properties.b_box.width / 8) << 8ul;
+        //!< get the bit alignment of the font data within the character encoding
+        auto bbox_width = character.properties.b_box.width;
+        auto alignment = (bbox_width % 8 == 0) ? (bbox_width / 8) : (bbox_width / 8) + 1;
+        uint32_t pixel_alignment = alignment << 8ul;
 
-            //!< draw the row of characters
-            for (int j = 0; j < character.properties.b_box.width; j++){                       
-                if (character.bitmap[i] & (pixel_alignment >> j)){
+        //!< draw the character
+        for (int j = 0; j < character.properties.b_box.height; j++) {
+            for (int i = 0; i < character.properties.b_box.width; i++){                       
+                if (character.bitmap[j] & (pixel_alignment >> i)){
                     auto offset = character.properties.b_box.width * character_count;
-                    auto row_coordinate = _origin.x + offset + i;
-                    auto column_coordinate = _origin.y + j;
-                    if ((i < height) && (j < width)){
-                        canvas.set_pixel(row_coordinate, column_coordinate, color);
+                    auto x = _origin.x + offset + i;
+                    auto y = _origin.y + j;
+                    if ((y < height) && (x < width)){
+                        canvas.set_pixel(x, y, color);
                     }                    
                 }
             }

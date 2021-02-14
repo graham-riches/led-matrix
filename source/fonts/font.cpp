@@ -76,7 +76,7 @@ expected<font, std::string> font::from_stream(std::istream&& stream) {
     //!< read the input stream into a string buffer and get read the underlying string
     std::stringstream buffer;
     buffer << stream.rdbuf();
-    std::string font_data = buffer.str();    
+    std::string font_data = buffer.str();
 
     //!< split the string by properties and characters
     auto temp = string_helpers::split(font_data, "ENDPROPERTIES\n");    

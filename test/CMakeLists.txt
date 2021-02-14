@@ -41,6 +41,7 @@ include_directories(
     ${PARENT_DIR}/source
     ${PARENT_DIR}/source/reactive
     ${PARENT_DIR}/source/fonts
+    ${PARENT_DIR}/source/graphics
     ${PARENT_DIR}/source/io
 	${PARENT_DIR}/modules/rpi-rgb-led-matrix/include
     ${PARENT_DIR}/modules/rpi-rgb-led-matrix/lib
