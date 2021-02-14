@@ -19,6 +19,7 @@
 #include <string>
 #include <charconv>
 #include <algorithm>
+#include <exception>
 
 
 /********************************** Constants *******************************************/
@@ -132,6 +133,26 @@ std::vector<character> font::encode_with_default(const std::string& message, con
     return message | ranges::views::transform([this](auto&& c){return get_character(c);})
                    | ranges::views::transform([this, default_character](auto&& exp){ return (exp) ? exp.get_value() : default_character; })
                    | ranges::to_vector;
+}
+
+
+/**
+ * \brief lookup a string and replace any missing characters with the character passed as default provided it exists
+ * \note this function cannot guarantee that the default character passed in exists in the character set, so it must throw
+ *       an exception if that character does not exist.
+ * 
+ * \param message the string to encode
+ * \param default_character default character to replace missing characters with
+ * \retval std::vector<character> 
+ */
+std::vector<character> font::encode_with_default(const std::string& message, const char default_character) {
+    auto maybe_character = get_character(default_character);
+    if (maybe_character) {
+        auto character = maybe_character.get_value();
+        return encode_with_default(message, character);
+    } else {
+        throw std::runtime_error("default character does not exist in the selected font");
+    }
 }
 
 };  // namespace fonts

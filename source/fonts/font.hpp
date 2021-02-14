@@ -86,6 +86,17 @@ class font {
      */
     std::vector<character> encode_with_default(const std::string& message, const character default_character);
 
+    /**
+     * \brief lookup a string and replace any missing characters with the character passed as default provided it exists
+     * \note this function cannot guarantee that the default character passed in exists in the character set, so it must throw
+     *       an exception if that character does not exist.
+     * 
+     * \param message the string to encode
+     * \param default_character default character to replace missing characters with
+     * \retval std::vector<character> 
+     */
+    std::vector<character> encode_with_default(const std::string& message, const char default_character);
+
   private:
     std::map<int, character> _characters;  //!< maps ascii character values to the character object
 };

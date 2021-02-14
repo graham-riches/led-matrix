@@ -79,7 +79,7 @@ int main(int argc, char* argv[]) {
     }
 
     auto font = maybe_font.get_value();
-    auto characters = font.encode("HELLO WORLD"); //!< need a default overload that takes a char
+    auto characters = font.encode_with_default("HELLO WORLD", ' ');
 
 
     //!< create the RGB Matrix object from the validated options.    
