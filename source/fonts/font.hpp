@@ -41,9 +41,17 @@ class font {
      * \brief factory method to parse a stream of data that is stored as a stream
      * 
      * \param stream the stream containing the data
-     * \retval excpected<font, std::string> 
+     * \retval expected<font, std::string> 
      */
     static expected<font, std::string> from_stream(std::istream& stream);
+
+    /**
+     * \brief factory method to parse a stream of data that is stored as a stream. Overload for rvalue references
+     * 
+     * \param stream the stream containing the data
+     * \retval expected<font, std::string> 
+     */
+    static expected<font, std::string> from_stream(std::istream&& stream);
 
     /**
      * \brief Get a character by its encoding value

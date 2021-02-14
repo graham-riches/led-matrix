@@ -19,11 +19,10 @@
 using json = nlohmann::json;
 
 /********************************** Types *******************************************/
-
 /**
- * \brief set of string options to manage the memory requirements for the matrix configuration structure
+ * \brief set of string options to manage the memory requirements for the led matrix configuration structure
  */
-struct StringOptions {
+struct matrix_string_options {
     std::string hardware_mapping;
     std::string panel_type;
     std::string led_rgb_sequence;
@@ -31,17 +30,25 @@ struct StringOptions {
 };
 
 /**
+ * \brief custom application options that don't deal with the LED matrix settings 
+ */
+struct application_options {
+    std::string font;
+};
+
+/**
  * \brief structure to hold the complete set of matrix options
  */
-struct ConfigurationOptions {
+struct configuration_options {
     rgb_matrix::RGBMatrix::Options options;
     rgb_matrix::RuntimeOptions runtime_options;
-    StringOptions string_options;
+    matrix_string_options string_options;
+    application_options app_options;
 
     /**
      * \brief Construct a new Configuration Options object with the default constructor
      */
-    ConfigurationOptions() = default;
+    configuration_options() = default;
 
     /**
      * \brief Construct a new Configuration Options object by copy, which requires
@@ -49,16 +56,7 @@ struct ConfigurationOptions {
      * 
      * \param other the other to copy from
      */
-    ConfigurationOptions(const ConfigurationOptions& other) {
-        string_options = other.string_options;
-        runtime_options = other.runtime_options;
-        options = other.options;
-        /* reset option string pointers */
-        options.hardware_mapping = string_options.hardware_mapping.c_str();
-        options.panel_type = string_options.panel_type.c_str();
-        options.led_rgb_sequence = string_options.led_rgb_sequence.c_str();
-        options.pixel_mapper_config = string_options.pixel_mapper_config.c_str();
-    }
+    configuration_options(const configuration_options& other);
 };
 
 /********************************** Function Declarations *******************************************/
@@ -69,4 +67,4 @@ struct ConfigurationOptions {
  * \param config the json container to parse
  * \retval expected of options or a string if configuration is invalid
  */
-expected<ConfigurationOptions, std::string> create_options_from_json(json& config);
+expected<configuration_options, std::string> create_options_from_json(json& config);

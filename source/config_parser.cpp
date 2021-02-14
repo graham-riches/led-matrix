@@ -16,7 +16,7 @@
 /**
  * \brief enumeration of all command line options
  */
-enum class Options : unsigned {
+enum class options : unsigned {
     hardware_mapping,
     panel_type,
     scan_mode,
@@ -37,7 +37,8 @@ enum class Options : unsigned {
     show_refresh_rate,
     limit_refresh_rate,
     slowdown,
-    daemonize
+    daemonize,
+    font
 };
 
 /********************************** Local Function Declarations *******************************************/
@@ -45,127 +46,159 @@ template <typename ReturnType, typename Key>
 std::optional<ReturnType> get_value(const std::map<Key, ReturnType>& map, Key key);
 
 /********************************** Local Variables *******************************************/
-const std::map<std::string, Options> flag_options = {{"hardware_mapping", Options::hardware_mapping},
-                                                     {"panel_type", Options::panel_type},
-                                                     {"scan_mode", Options::scan_mode},
-                                                     {"row_address_type", Options::row_address_type},
-                                                     {"multiplexing", Options::multiplexing},
-                                                     {"rows", Options::rows},
-                                                     {"columns", Options::columns},
-                                                     {"chain_length", Options::chain_length},
-                                                     {"parallel_chains", Options::parallel_chains},
-                                                     {"pwm_bits", Options::pwm_bits},
-                                                     {"pwm_lsb_nanoseconds", Options::pwm_lsb_nanoseconds},
-                                                     {"pwm_dither_bits", Options::pwm_dither_bits},
-                                                     {"disable_hardware_pulsing", Options::disable_hardware_pulsing},
-                                                     {"brightness", Options::brightness},
-                                                     {"invert_colors", Options::invert_colors},
-                                                     {"rgb_sequence", Options::rgb_sequence},
-                                                     {"pixel_mapper", Options::pixel_mapper},
-                                                     {"show_refresh_rate", Options::show_refresh_rate},
-                                                     {"limit_refresh_rate", Options::limit_refresh_rate},
-                                                     {"slowdown", Options::slowdown},
-                                                     {"daemonize", Options::daemonize}};
+const std::map<std::string, options> flag_options = {{"hardware_mapping", options::hardware_mapping},
+                                                     {"panel_type", options::panel_type},
+                                                     {"scan_mode", options::scan_mode},
+                                                     {"row_address_type", options::row_address_type},
+                                                     {"multiplexing", options::multiplexing},
+                                                     {"rows", options::rows},
+                                                     {"columns", options::columns},
+                                                     {"chain_length", options::chain_length},
+                                                     {"parallel_chains", options::parallel_chains},
+                                                     {"pwm_bits", options::pwm_bits},
+                                                     {"pwm_lsb_nanoseconds", options::pwm_lsb_nanoseconds},
+                                                     {"pwm_dither_bits", options::pwm_dither_bits},
+                                                     {"disable_hardware_pulsing", options::disable_hardware_pulsing},
+                                                     {"brightness", options::brightness},
+                                                     {"invert_colors", options::invert_colors},
+                                                     {"rgb_sequence", options::rgb_sequence},
+                                                     {"pixel_mapper", options::pixel_mapper},
+                                                     {"show_refresh_rate", options::show_refresh_rate},
+                                                     {"limit_refresh_rate", options::limit_refresh_rate},
+                                                     {"slowdown", options::slowdown},
+                                                     {"daemonize", options::daemonize},
+                                                     {"font", options::font}};
 
 static const std::map<std::string, int> daemon_settings = {{"manual", -1}, {"on", 1}, {"off", 0}};
 
 /********************************** Public Function Definitions *******************************************/
-expected<ConfigurationOptions, std::string> create_options_from_json(json& config) {
-    ConfigurationOptions options;
+/**
+ * \brief Construct a new Configuration Options object by copy, which requires
+ *        a deep copy to reset the string pointers
+ * 
+ * \param other the other to copy from
+ */
+configuration_options::configuration_options(const configuration_options& other) {
+    string_options = other.string_options;
+    app_options = other.app_options;
+    runtime_options = other.runtime_options;
+    options = other.options;
+    
+    //!< point the led matrix string settings to the correct pointers since it uses char pointers instead of strings..
+    options.hardware_mapping = string_options.hardware_mapping.c_str();
+    options.panel_type = string_options.panel_type.c_str();
+    options.led_rgb_sequence = string_options.led_rgb_sequence.c_str();
+    options.pixel_mapper_config = string_options.pixel_mapper_config.c_str();    
+}
+
+
+/**
+ * \brief parse configuration options from JSON into matrix options struct. Returns an RGB matrix object if the
+ *        options are valid.
+ * 
+ * \param config the json container to parse
+ * \retval expected of options or a string if configuration is invalid
+ */
+expected<configuration_options, std::string> create_options_from_json(json& config) {
+    configuration_options options;
 
     for ( const auto& [key, value] : config.items() ) {
         auto option = get_value(flag_options, key);
         if ( option ) {
             switch ( option.value() ) {
-                case Options::hardware_mapping:                    
+                case options::hardware_mapping:                    
                     options.string_options.hardware_mapping = std::string{value};
                     options.options.hardware_mapping = options.string_options.hardware_mapping.c_str();
                     break;
 
-                case Options::panel_type:
+                case options::panel_type:
                     options.string_options.panel_type = std::string{value};
                     options.options.panel_type = options.string_options.panel_type.c_str();
                     break;
 
-                case Options::scan_mode:
+                case options::scan_mode:
                     options.options.scan_mode = int{value};
                     break;
 
-                case Options::row_address_type:
+                case options::row_address_type:
                     options.options.row_address_type = int{value};
                     break;
 
-                case Options::multiplexing:
+                case options::multiplexing:
                     options.options.multiplexing = int{value};
                     break;
 
-                case Options::rows:
+                case options::rows:
                     options.options.rows = int{value};
                     break;
 
-                case Options::columns:
+                case options::columns:
                     options.options.cols = int{value};
                     break;
 
-                case Options::chain_length:
+                case options::chain_length:
                     options.options.chain_length = int{value};
                     break;
 
-                case Options::parallel_chains:
+                case options::parallel_chains:
                     options.options.parallel = int{value};
                     break;
 
-                case Options::pwm_bits:
+                case options::pwm_bits:
                     options.options.pwm_bits = int{value};
                     break;
 
-                case Options::pwm_lsb_nanoseconds:
+                case options::pwm_lsb_nanoseconds:
                     options.options.pwm_lsb_nanoseconds = int{value};
                     break;
 
-                case Options::pwm_dither_bits:
+                case options::pwm_dither_bits:
                     options.options.pwm_dither_bits = int{value};
                     break;
 
-                case Options::disable_hardware_pulsing:
+                case options::disable_hardware_pulsing:
                     options.options.disable_hardware_pulsing = bool{value};
                     break;
 
-                case Options::brightness:
+                case options::brightness:
                     options.options.brightness = int{value};
                     break;
 
-                case Options::invert_colors:
+                case options::invert_colors:
                     options.options.inverse_colors = bool{value};
                     break;
 
-                case Options::rgb_sequence:
+                case options::rgb_sequence:
                     options.string_options.led_rgb_sequence = std::string{value};
                     options.options.led_rgb_sequence = options.string_options.led_rgb_sequence.c_str();
                     break;
 
-                case Options::pixel_mapper:
+                case options::pixel_mapper:
                     options.string_options.pixel_mapper_config = std::string{value};
                     options.options.pixel_mapper_config = options.string_options.pixel_mapper_config.c_str();
                     break;
 
-                case Options::show_refresh_rate:
+                case options::show_refresh_rate:
                     options.options.show_refresh_rate = bool{value};
                     break;
 
-                case Options::limit_refresh_rate:
+                case options::limit_refresh_rate:
                     options.options.limit_refresh_rate_hz = int{value};
                     break;
 
-                case Options::slowdown:
+                case options::slowdown:
                     options.runtime_options.gpio_slowdown = int{value};
                     break;
 
-                case Options::daemonize: {
+                case options::daemonize: {
                     auto daemon_setting = get_value(daemon_settings, std::string{value});
                     options.runtime_options.daemon = (daemon_setting) ? daemon_setting.value() : 0;
                     break;
                 }
+
+                case options::font:
+                    options.app_options.font = std::string{value};
+                    break;
 
                 default:
                     break;
@@ -175,9 +208,9 @@ expected<ConfigurationOptions, std::string> create_options_from_json(json& confi
 
     std::string validation_results;
     if ( options.options.Validate(&validation_results) ) {
-        return expected<ConfigurationOptions, std::string>::success(options);
+        return expected<configuration_options, std::string>::success(options);
     } else {
-        return expected<ConfigurationOptions, std::string>::error(validation_results);
+        return expected<configuration_options, std::string>::error(validation_results);
     }
 }
 

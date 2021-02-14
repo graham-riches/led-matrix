@@ -64,13 +64,14 @@ expected<character, std::string> font::get_character(const char encoding) {
     return this->get_character(static_cast<uint16_t>(encoding));
 }
 
+
 /**
  * \brief parse a stream of data that is stored as a stream
  * 
  * \param stream the stream containing the data
  * \retval excpected<font, std::string> 
  */
-expected<font, std::string> font::from_stream(std::istream& stream) {
+expected<font, std::string> font::from_stream(std::istream&& stream) {
     //!< read the input stream into a string buffer and get read the underlying string
     std::stringstream buffer;
     buffer << stream.rdbuf();
@@ -91,6 +92,16 @@ expected<font, std::string> font::from_stream(std::istream& stream) {
          : expected<fonts::font, std::string>::error("No characters found for font");    
 }
 
+/**
+ * \brief parse a stream of data that is stored as a stream. Overload for value references
+ * 
+ * \param stream the stream containing the data
+ * \retval excpected<font, std::string> 
+ */
+expected<font, std::string> font::from_stream(std::istream& stream) {
+    return from_stream(std::move(stream));
+}
+
 
 /**
  * \brief encode a string as a vector of bitmapped characters
@@ -107,6 +118,7 @@ expected<std::vector<character>, std::string> font::encode(const std::string& me
     return (characters.size() != message.size()) ? expected<std::vector<character>, std::string>::error("Encoding one or more tokens failed")
          : expected<std::vector<character>, std::string>::success(characters);
 }
+
 
 /**
  * \brief lookup a string and encode it as character objects. Replace any failed lookups with a default character

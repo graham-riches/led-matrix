@@ -25,7 +25,13 @@
 /* test that parsing an invalid font file stream returns an error */
 TEST(font_tests, test_parsing_font_from_file) {    
     std::ifstream input_stream{"../font_parser/4x6.bdf"};
-    auto font = fonts::font::from_stream(input_stream);    
+    auto font = fonts::font::from_stream(input_stream);
+    ASSERT_TRUE(font);
+}
+
+/* test that the rvalue reference overload also functions */
+TEST(font_tests, test_font_from_file_rvalue_ref) {
+    auto font = fonts::font::from_stream(std::ifstream{"../font_parser/4x6.bdf"});
     ASSERT_TRUE(font);
 }
 
