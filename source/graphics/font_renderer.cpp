@@ -39,8 +39,8 @@ font_renderer::font_renderer(const std::vector<fonts::character>& characters, gr
  */
 frame& font_renderer::draw(frame& canvas) {        
     //!< get the frame size to make sure we don't draw outside the limits of the frame
-    const auto width = canvas.get_width();
-    const auto height = canvas.get_height();
+    const auto width = canvas.width();
+    const auto height = canvas.height();
 
     for (int character_count = 0; character_count < characters.size(); character_count++) {
         //!< get the current character

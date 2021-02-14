@@ -21,10 +21,7 @@ namespace graphics
  * \param canvas pointer to the canvas
  */
 frame::frame(rgb_matrix::Canvas* canvas)
-: _canvas(canvas) {
-    _height = canvas->height();
-    _width = canvas->width();
-}
+: _canvas(canvas) { }
 
 /**
  * \brief set the value of a pixel in the frame from a reference pixel
@@ -34,18 +31,52 @@ frame::frame(rgb_matrix::Canvas* canvas)
  * \param pixel the pixel to set
  */
 void frame::set_pixel(int x, int y, const pixel& pixel) {
-    if ((x < _width) && (y < _height)) {
+    if ((x < _canvas->width()) && (y < _canvas->height())) {
         _canvas->SetPixel(x, y, pixel.red, pixel.green, pixel.blue);
     }
 }
+
+/**
+ * \brief Set a pixel. Overload to meet the canvas interface
+ * 
+ * \param x location
+ * \param y location
+ * \param red pixel R value
+ * \param green pixel G value
+ * \param blue pixel B value
+ */
+void frame::set_pixel(int x, int y, uint8_t red, uint8_t green, uint8_t blue) {
+    if ((x < _canvas->width()) && (y < _canvas->height())) {
+        _canvas->SetPixel(x, y, red, green, blue);
+    }
+}
+
+/**
+ * \brief clear the canvas
+ */
+void frame::clear(void) {
+    _canvas->Clear();
+}
+
+/**
+ * \brief fill the canvas all with a specific color
+ * 
+ * \param red R value
+ * \param green G value
+ * \param blue B value
+ */
+void frame::fill(uint8_t red, uint8_t green, uint8_t blue) {
+    _canvas->Fill(red, green, blue);
+}
+
 
 /**
  * \brief getter for the width of the frame
  * 
  * \retval integer width
  */
-int frame::get_width(void) const {
-    return _width;
+int frame::width(void) const {
+    return _canvas->width();
 }
 
 /**
@@ -53,8 +84,8 @@ int frame::get_width(void) const {
  * 
  * \retval integer height
  */
-int frame::get_height(void) const {
-    return _height;
+int frame::height(void) const {
+    return _canvas->height();
 }
 
 

@@ -29,7 +29,8 @@
 using json = nlohmann::json;
 
 //!< structure to store instructions to set a pixel to a specific color
-struct set_pixel {
+struct write_text {
+    std::string message;        
     uint8_t x;
     uint8_t y;
     uint8_t r;
@@ -38,17 +39,31 @@ struct set_pixel {
 };
 
 //!< alias for an expected of set pixel
-using expected_set_pixel = expected<set_pixel, std::exception_ptr>;
+using expected_write_text = expected<write_text, std::exception_ptr>;
 
 /****************************** Function Definitions ***********************************/
 /**
- * \brief convert json into an instruction struct to set a pixel value
+ * \brief convert json into an instruction struct to write a message on the screen
  * 
  * \param data json data
- * \retval expected_set_pixel expected 
+ * \retval expected type containing a write_text struct
  */
-expected_set_pixel pixel_instruction_from_json(const json& data) {
-    return reactive::mtry([&] { return set_pixel{data.at("x"), data.at("y"), data.at("r"), data.at("g"), data.at("b")}; });
+expected_write_text instruction_from_json(const json& data) {
+    return reactive::mtry([&] { return write_text{data.at("message"), data.at("x"), data.at("y"), data.at("r"), data.at("g"), data.at("b")}; });
+}
+
+/**
+ * \brief sink function to draw text on the screen based on a TCP instruction
+ * 
+ * \param instruction the draw text instruction
+ * \param font the font to draw in
+ * \param frame frame to draw on
+ */
+void draw_text(const write_text& instruction, fonts::font& font, graphics::frame& frame) {
+    frame.clear();
+    auto characters = font.encode_with_default(instruction.message, ' ');
+    auto font_renderer = graphics::font_renderer(characters, graphics::origin{instruction.x, instruction.y}, instruction.r, instruction.g, instruction.b );
+    font_renderer.draw(frame);
 }
 
 /**
@@ -82,12 +97,8 @@ int main(int argc, char* argv[]) {
     auto matrix = std::unique_ptr<rgb_matrix::RGBMatrix>(rgb_matrix::CreateMatrixFromOptions(options.options, options.runtime_options));
     matrix->StartRefresh();  //!< unfortunately this manages it's own pthread :(
 
-    //!< test encode a string to render    
-    auto characters = font.encode_with_default("HELLO WORLD", ' ');
-    auto frame = graphics::frame(matrix.get());
-    auto font_drawer = graphics::font_renderer(characters, graphics::origin{0, 0}, 255, 0, 0);
-    font_drawer.draw(frame);
-
+    //!< create a graphics frame object to render text messages recevied over TCP    
+    auto frame = graphics::frame(matrix.get());    
 
     //!< create a vector of threads to hold the threads that will do the other application work
     std::vector<std::thread> threads;
@@ -98,10 +109,10 @@ int main(int argc, char* argv[]) {
     
     auto io_pipeline = io_service(service) 
                      | transform( [](const std::string& message) { return reactive::mtry([&] { return json::parse(message); }); })
-                     | transform( [](const auto& exp) { return mbind(exp, pixel_instruction_from_json); } )
+                     | transform( [](const auto& exp) { return mbind(exp, instruction_from_json); } )
                      | filter( [](const auto& exp){ return (exp); } )
                      | transform( [](const auto& exp){ return exp.get_value(); } )
-                     | sink([&matrix](const auto& instruction) { matrix->SetPixel(instruction.x, instruction.y, instruction.r, instruction.g, instruction.b); });
+                     | sink([&frame, &font](const auto& instruction) { draw_text(instruction, font, frame); });
 
     //!< add the TCP io service to the threads list and start the thread
     threads.push_back(std::thread{[&service](){service.run();}});

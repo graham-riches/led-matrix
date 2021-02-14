@@ -40,9 +40,10 @@ struct pixel {
 };
 
 /**
- * \brief frame object that contains a 2D array of pixels that are drawn onto
+ * \brief frame object that contains a 2D array of pixels that are drawn onto. 
+ * \note this is an adapter for the canvas interface
  */
-class frame {
+class frame  {
   public:
     /**
      * \brief Construct a new frame object from a led matrix canvas pointer
@@ -52,7 +53,7 @@ class frame {
     frame(rgb_matrix::Canvas* canvas);
 
     /**
-     * \brief Set a pixel value in the frame to the RGBA values in the pixel argument
+     * \brief Set a pixel value in the frame to the RGB values in the pixel argument
      * 
      * \param x coordinate to set at
      * \param y coordinate to set at
@@ -61,22 +62,47 @@ class frame {
     void set_pixel(int x, int y, const pixel& pixel);
 
     /**
+     * \brief Set a pixel. Overload to meet the canvas interface
+     * 
+     * \param x location
+     * \param y location
+     * \param red pixel R value
+     * \param green pixel G value
+     * \param blue pixel B value
+     */
+    void set_pixel(int x, int y, uint8_t red, uint8_t green, uint8_t blue);
+
+    /**
      * \brief Get the width of the frame
      * 
      * \retval width as an integer
      */
-    int get_width(void) const;
+    int width(void) const;
 
     /**
      * \brief Get the height of the frame
      * 
      * \retval height as an integer
      */
-    int get_height(void) const;
+    int height(void) const;
+
+    /**
+     * \brief clear the canvas
+     */
+    void clear(void);
+
+    /**
+     * \brief fill the canvas all with a specific color
+     * 
+     * \param red R value
+     * \param green G value
+     * \param blue B value
+     */
+    void fill(uint8_t red, uint8_t green, uint8_t blue);
+
+    
 
   private:    
-    int _width;
-    int _height;
     rgb_matrix::Canvas* _canvas;
 };
 
