@@ -185,3 +185,31 @@ TEST(font_tests, test_string_to_vector_of_characters_with_default) {
         ASSERT_EQ(32, character.properties.encoding);
     }
 }
+
+/* test string to vector with a char default works if the character exists */
+TEST(font_tests, test_string_to_vector_with_char_default_works_if_character_exists) {
+    std::vector<fonts::character> characters;
+    fonts::character_properties properties{32, {0, 0}, {0, 0}, fonts::bounding_box{0, 0, 0, 0}};
+    fonts::character default_character{std::move(properties), std::vector<uint32_t>{}};
+    characters.push_back(default_character);
+    fonts::font font{characters};
+    auto encoded = font.encode_with_default("Hello World", ' ');
+    for (const auto& character : encoded) {
+        ASSERT_EQ(32, character.properties.encoding);
+    }
+}
+
+/* test string to vector with a char default throws if the character doesn't exist */
+TEST(font_tests, test_string_to_vector_with_char_throws_if_character_is_invalid) {
+    std::vector<fonts::character> characters;
+    fonts::character_properties properties{32, {0, 0}, {0, 0}, fonts::bounding_box{0, 0, 0, 0}};
+    fonts::character default_character{std::move(properties), std::vector<uint32_t>{}};
+    characters.push_back(default_character);
+    fonts::font font{characters};        
+    try {
+        auto encoded = font.encode_with_default("Hello World", '1');
+        ASSERT_TRUE(false);
+    } catch (const std::runtime_error& e) {        
+        ASSERT_STREQ("default character does not exist in the selected font", e.what());
+    }
+}
