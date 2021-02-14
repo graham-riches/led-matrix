@@ -18,36 +18,35 @@
 #include "primatives.hpp"
 #include <vector>
 
-
 namespace graphics
 {
 /********************************** Types *******************************************/
 /**
  * \brief shape type that handles drawing bitmapped fonts
  */
-struct font_renderer : public shape {  
+struct font_renderer : public shape {
     /**
      * \brief Construct a new font renderer object
      * 
-     * \param characters vector of characters to render
-     * \param origin location to draw the 
+     * \param characters characters to render
+     * \param origin origin to render at
+     * \param red R color channel
+     * \param green G color channel
+     * \param blue B color channel
+     * \param alpha A color channel
      */
-    font_renderer(const std::vector<fonts::character>& characters, graphics::origin origin);
+    font_renderer(const std::vector<fonts::character>& characters, graphics::origin origin, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha = 1.0);
 
     /**
      * \brief render a sequence of characters on the screen
      * 
-     * \param previous_frame existing frame canvas
-     * \param red text color red channel
-     * \param green text color green channel
-     * \param blue text color blue channel
-     * \param alpha text alpha: default is solid
-     * \retval frame new frame
+     * \param canvas existing frame canvas
+     * \retval the drawing frame
      */
-    frame draw(const frame& previous_frame, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha=1.0);
-
+    frame& draw(frame& canvas);
 
     std::vector<fonts::character> characters;
+    pixel color;
 };
 
 };  // namespace graphics

@@ -22,9 +22,9 @@ namespace graphics
  * \param width width of the frame in pixels
  */
 frame::frame(int height, int width)
-: width(width)
-, height(height)
-, pixels(std::vector<std::vector<pixel>>(height, std::vector<pixel>(width))) { }
+: _width(width)
+, _height(height)
+, _pixels(std::vector<std::vector<pixel>>(height, std::vector<pixel>(width))) { }
 
 /**
  * \brief Construct a new frame::frame object from a copy
@@ -32,7 +32,7 @@ frame::frame(int height, int width)
  * \param other to copy from
  */
 frame::frame(const frame& other) {
-    pixels = other.pixels;
+    _pixels = other._pixels;
 }
 
 /**
@@ -43,6 +43,28 @@ frame::frame(const frame& other) {
  * \param pixel the pixel to set
  */
 void frame::set_pixel(int row, int column, const pixel& pixel) {
-
+    if ((row < _height) && (column < _width)) {
+        _pixels[row][column] = pixel;
+    }
 }
+
+/**
+ * \brief getter for the width of the frame
+ * 
+ * \retval integer width
+ */
+int frame::get_width(void) const {
+    return _width;
+}
+
+/**
+ * \brief getter for the height of the frame
+ * 
+ * \retval integer height
+ */
+int frame::get_height(void) const {
+    return _height;
+}
+
+
 };

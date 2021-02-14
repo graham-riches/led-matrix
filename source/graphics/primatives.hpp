@@ -44,10 +44,7 @@ struct pixel {
  */
 class frame {
   public:
-    frame(int height, int width)
-        : width(width)
-        , height(height)
-        , pixels(std::vector<std::vector<pixel>>(height, std::vector<pixel>(width))) { }
+    frame(int height, int width);
 
     frame(const frame& other);
 
@@ -58,9 +55,9 @@ class frame {
     int get_height(void) const;
 
   private:
-    std::vector<std::vector<pixel>> pixels;
-    int width;
-    int height;
+    std::vector<std::vector<pixel>> _pixels;
+    int _width;
+    int _height;
 };
 
 /**
@@ -70,9 +67,9 @@ struct shape {
     origin _origin;
     
     shape(const origin& origin)
-    : origin(origin) {}
+    : _origin(origin) {}
 
-    virtual frame draw(const frame& frame, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha) = 0;
+    virtual frame& draw(frame& canvas) = 0;
 };
 
 };  // namespace graphics

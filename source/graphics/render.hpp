@@ -31,6 +31,7 @@ namespace graphics
  * \retval frame rendered frame object
  */
 inline frame render(int height, int width, std::vector<shape*> shapes) {
-    return std::accumulate(shapes.cbegin(), shapes.cend(), frame{height, width}, [](const frame& frame, shape* shape) { return shape->draw(frame); });
+    frame new_frame = std::accumulate(shapes.cbegin(), shapes.cend(), frame{height, width}, [](frame& frame, shape* shape) { return shape->draw(frame); });
+    return new_frame;
 }
 };  // namespace graphics
