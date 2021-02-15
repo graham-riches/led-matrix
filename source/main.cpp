@@ -62,7 +62,8 @@ expected_write_text instruction_from_json(const json& data) {
 void draw_text(const write_text& instruction, fonts::font& font, graphics::frame& frame) {
     frame.clear();
     auto characters = font.encode_with_default(instruction.message, ' ');
-    auto font_renderer = graphics::font_renderer(characters, graphics::origin{instruction.x, instruction.y}, instruction.r, instruction.g, instruction.b );
+    auto font_renderer = graphics::font_renderer(characters, graphics::origin{instruction.x, instruction.y}, instruction.r, 
+                                                 instruction.g, instruction.b, graphics::text_wrap_mode::wrap);
     font_renderer.draw(frame);
 }
 

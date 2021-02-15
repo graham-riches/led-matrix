@@ -22,6 +22,12 @@ namespace graphics
 {
 /********************************** Types *******************************************/
 /**
+ * \brief options for handling string wrapping
+ * 
+ */
+enum class text_wrap_mode : unsigned { none = 0, wrap };
+
+/**
  * \brief shape type that handles drawing bitmapped fonts
  */
 struct font_renderer : public shape {
@@ -32,9 +38,15 @@ struct font_renderer : public shape {
      * \param origin origin to render at
      * \param red R color channel
      * \param green G color channel
-     * \param blue B color channel     
+     * \param blue B color channel
+     * \param mode the text wrap mode
      */
-    font_renderer(const std::vector<fonts::character>& characters, graphics::origin origin, uint8_t red, uint8_t green, uint8_t blue);
+    font_renderer(const std::vector<fonts::character>& characters,
+                  graphics::origin origin,
+                  uint8_t red,
+                  uint8_t green,
+                  uint8_t blue,
+                  text_wrap_mode mode = text_wrap_mode::none);
 
     /**
      * \brief render a sequence of characters on the screen
@@ -46,6 +58,7 @@ struct font_renderer : public shape {
 
     std::vector<fonts::character> characters;
     pixel color;
+    text_wrap_mode wrap_mode;
 };
 
 };  // namespace graphics
