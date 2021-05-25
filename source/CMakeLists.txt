@@ -15,4 +15,4 @@ set(SOURCES
 add_executable(${BINARY} ${SOURCES})
 
 # link with the RPI_RGB library
-target_link_libraries(${BINARY} -static-libstdc++ rpi-rgb-led-matrix Threads::Threads ${Boost_SYSTEM_LIBRARY} ${Boost_THREAD_LIBRARY})
+target_link_libraries(${BINARY} -static-libstdc++ rpi-rgb-led-matrix Threads::Threads ${Boost_SYSTEM_LIBRARY} ${Boost_THREAD_LIBRARY} fmt::fmt)

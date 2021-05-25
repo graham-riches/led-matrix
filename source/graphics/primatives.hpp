@@ -100,8 +100,6 @@ class frame  {
      */
     void fill(uint8_t red, uint8_t green, uint8_t blue);
 
-    
-
   private:    
     rgb_matrix::Canvas* _canvas;
 };

@@ -20,6 +20,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <optional>
 
 namespace fonts
 {
@@ -96,6 +97,13 @@ class font {
      * \retval std::vector<character> 
      */
     std::vector<character> encode_with_default(const std::string& message, const char default_character);
+
+    /**
+     * \brief Get the bbox object for the font
+     * 
+     * \retval optional<bounding_box> 
+     */
+    std::optional<bounding_box> get_bbox();
 
   private:
     std::map<int, character> _characters;  //!< maps ascii character values to the character object

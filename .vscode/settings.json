@@ -91,7 +91,13 @@
         "codecvt": "cpp",
         "csignal": "cpp",
         "source_location": "cpp",
-        "future": "cpp"
+        "future": "cpp",
+        "charconv": "cpp",
+        "coroutine": "cpp",
+        "queue": "cpp",
+        "span": "cpp",
+        "valarray": "cpp",
+        "*.ipp": "cpp"
     },
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true,

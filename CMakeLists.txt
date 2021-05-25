@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.1...3.15)
 
+# RUN: cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=toolchain/Toolchain-RaspberryPi.cmake -DBoost_NO_BOOST_CMAKE=TRUE -DBOOST_ROOT:PATHNAME=/mnt/d/code/Environments/boost_1_71_0/ -DBoost_INCLUDE_DIR:PATHNAME=/mnt/d/code/Environments/boost_1_71_0/
+
 # create the project name
 project(led_matrix)
 
@@ -10,12 +12,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # search for mandatory packages
-set(CMAKE_FIND_ROOT_PATH /usr/local/boost)
 find_package(Threads REQUIRED)
 find_package(Boost REQUIRED)
 
 if(Boost_FOUND)
     set(Boost_USE_STATIC_LIBS ON)
+    message(STATUS "FOUND BOOST: ")
+    message(STATUS ${Boost_INCLUDE_DIRS})
     include_directories(${Boost_INCLUDE_DIRS})
 endif()
 
@@ -29,10 +32,12 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/source/reactive
     ${CMAKE_SOURCE_DIR}/source/fonts
     ${CMAKE_SOURCE_DIR}/source/graphics
+    ${CMAKE_SOURCE_DIR}/source/graphics/clocks
 	${CMAKE_SOURCE_DIR}/modules/rpi-rgb-led-matrix/include
     ${CMAKE_SOURCE_DIR}/modules/rpi-rgb-led-matrix/lib
     ${CMAKE_SOURCE_DIR}/modules/json/include
     ${CMAKE_SOURCE_DIR}/modules/range-v3/include
+    ${CMAKE_SOURCE_DIR}/modules/fmt/include
 )
 
 # add custom build compiler flags
@@ -44,6 +49,7 @@ add_subdirectory(source)
 add_subdirectory(modules)
 add_subdirectory(modules/json)
 add_subdirectory(modules/range-v3)
+add_subdirectory(modules/fmt)
 
 # run the prebuild script
 add_custom_command( OUTPUT version.h COMMAND ${CMAKE_SOURCE_DIR}/scripts/prebuild.sh )

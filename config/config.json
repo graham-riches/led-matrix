@@ -18,7 +18,7 @@
     "pixel_mapper": "",
     "show_refresh_rate": false,
     "limit_refresh_rate": 60,
-    "slowdown": 1,
+    "slowdown": 4,
     "daemonize": "manual",
-    "font": "5x8.bdf"
+    "font": "7x13B.bdf"
 }

@@ -155,4 +155,20 @@ std::vector<character> font::encode_with_default(const std::string& message, con
     }
 }
 
+
+/**
+ * \brief Get the bbox object for the font
+ * 
+ * \retval optional<bounding_box> 
+ */
+std::optional<bounding_box> font::get_bbox() {
+    auto maybe_character_a = get_character('a');
+    if (maybe_character_a) {
+        auto character_a = maybe_character_a.get_value();
+        return character_a.properties.b_box;
+    } else {
+        return {};
+    }
+}
+
 };  // namespace fonts

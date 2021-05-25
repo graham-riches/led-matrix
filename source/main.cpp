@@ -15,6 +15,7 @@
 #include "reactive.hpp"
 #include "font.hpp"
 #include "graphics.hpp"
+#include "interval_timer.hpp"
 #include <boost/asio.hpp>
 #include <chrono>
 #include <cstdint>
@@ -22,49 +23,53 @@
 #include <iostream>
 #include <thread>
 #include <vector>
+#include <thread>
+#include <future>
 
 
 /********************************** Types and Aliases *******************************************/
 //!< alias the json namespace for convenience
 using json = nlohmann::json;
 
-//!< structure to store instructions to set a pixel to a specific color
-struct write_text {
-    std::string message;        
-    uint8_t x;
-    uint8_t y;
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
-};
-
 //!< alias for an expected of set pixel
-using expected_write_text = expected<write_text, std::exception_ptr>;
+using expected_timer_config = expected<graphics::clocks::interval_timer::configuration, std::exception_ptr>;
 
 /****************************** Function Definitions ***********************************/
 /**
- * \brief convert json into an instruction struct to write a message on the screen
+ * \brief convert json into an instruction struct to start an interval timer
  * 
  * \param data json data
- * \retval expected type containing a write_text struct
+ * \retval expected type containing an interval timer
  */
-expected_write_text instruction_from_json(const json& data) {
-    return reactive::mtry([&] { return write_text{data.at("message"), data.at("x"), data.at("y"), data.at("r"), data.at("g"), data.at("b")}; });
+expected_timer_config timer_from_json(const json& data) {
+    return reactive::mtry([&] { 
+        graphics::clocks::interval_timer::configuration config;
+        config.total_intervals = data.at("total_intervals");
+        config.high_interval_ms = data.at("high_interval_ms");
+        config.low_interval_ms = data.at("low_interval_ms");
+        config.warmup_interval_ms = data.at("warmup_interval_ms");
+        config.cooldown_interval_ms = data.at("cooldown_interval_ms");
+        config.repeat_times = data.at("repeat_times");
+        return config; });
 }
 
 /**
- * \brief sink function to draw text on the screen based on a TCP instruction
+ * \brief sink function to spawn a new timer from a TCP instruction
  * 
- * \param instruction the draw text instruction
- * \param font the font to draw in
- * \param frame frame to draw on
+ * \param config configuration for the timer 
+ * \param time_font font to draw the time counter with
+ * \param stats_font font to draw the stats with
+ * \param frame graphics frame to draw on
  */
-void draw_text(const write_text& instruction, fonts::font& font, graphics::frame& frame) {
-    frame.clear();
-    auto characters = font.encode_with_default(instruction.message, ' ');
-    auto font_renderer = graphics::font_renderer(characters, graphics::origin{instruction.x, instruction.y}, instruction.r, 
-                                                 instruction.g, instruction.b, graphics::text_wrap_mode::wrap);
-    font_renderer.draw(frame);
+void spawn_timer(const graphics::clocks::interval_timer::configuration& config, fonts::font& time_font, fonts::font& stats_font, graphics::frame& frame) {   
+   auto timer_draw_thread = [&]() {
+       auto timer = graphics::clocks::interval_timer(graphics::origin{0, 0}, time_font, stats_font, config );
+       while ( !timer.is_complete() ) {
+           timer.draw(frame);
+           std::this_thread::sleep_for(std::chrono::milliseconds(50));
+       }       
+   };
+   std::async(std::launch::async, timer_draw_thread);
 }
 
 /**
@@ -85,14 +90,11 @@ int main(int argc, char* argv[]) {
     }    
     auto options = maybe_options.get_value();
     
-    //!< load the main application font bdf from the configuration
-    auto maybe_font = fonts::font::from_stream(std::ifstream{std::string{"graphics/fonts/"} + options.app_options.font});
-    if (!maybe_font) {
-        std::cout << maybe_font.get_error() << std::endl;
-        return -1;
-    }
-    auto font = maybe_font.get_value();
-    
+    //!< load the fonts
+    auto maybe_time_font = fonts::font::from_stream(std::ifstream{std::string{"graphics/fonts/7x13B.bdf"}});
+    auto time_font = maybe_time_font.get_value();
+    auto maybe_stats_font = fonts::font::from_stream(std::ifstream{std::string{"graphics/fonts/5x8.bdf"}});
+    auto stats_font = maybe_stats_font.get_value();
 
     //!< create the RGB Matrix object from the validated options.    
     auto matrix = std::unique_ptr<rgb_matrix::RGBMatrix>(rgb_matrix::CreateMatrixFromOptions(options.options, options.runtime_options));
@@ -110,10 +112,10 @@ int main(int argc, char* argv[]) {
     
     auto io_pipeline = io_service(service) 
                      | transform( [](const std::string& message) { return reactive::mtry([&] { return json::parse(message); }); })
-                     | transform( [](const auto& exp) { return mbind(exp, instruction_from_json); } )
+                     | transform( [](const auto& exp) { return mbind(exp, timer_from_json); } )
                      | filter( [](const auto& exp){ return (exp); } )
                      | transform( [](const auto& exp){ return exp.get_value(); } )
-                     | sink([&frame, &font](const auto& instruction) { draw_text(instruction, font, frame); });
+                     | sink([&](const auto& timer) { spawn_timer(timer, time_font, stats_font, frame); });
 
     //!< add the TCP io service to the threads list and start the thread
     threads.push_back(std::thread{[&service](){service.run();}});
