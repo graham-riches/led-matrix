@@ -17,9 +17,8 @@ if __name__ == '__main__':
     text = {'total_intervals': 6, 
             'high_interval_ms': 7000, 
             'low_interval_ms': 3000, 
-            'warmup_interval_ms': 420000, 
+            'warmup_interval_ms': 600000, 
             'cooldown_interval_ms': 300000, 
             'repeat_times': 6}
     message = '{}\n'.format(json.dumps(text))
     socket.send(message.encode())
-

@@ -131,7 +131,7 @@ public:
                                  : (m_state == timer_state::high)   ? "H:"
                                  : (m_state == timer_state::low)    ? "L:"
                                  : "C:";
-        std::string time_remaining = fmt::format("{:s} {:.3f}", state_string, current_time_remaining / 1000.0f );
+        std::string time_remaining = fmt::format("{:s} {:.2f}", state_string, current_time_remaining / 1000.0f );
         graphics::pixel color = (m_state == timer_state::warmup) ? graphics::pixel{255, 128, 128}
                               : (m_state == timer_state::high)   ? graphics::pixel{255, 255, 0}
                               : (m_state == timer_state::low)    ? graphics::pixel{0, 255, 0}
