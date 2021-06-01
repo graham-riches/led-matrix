@@ -27,7 +27,6 @@
 
 namespace fonts
 {
-
 /**
  * \brief Construct a new font object from a vector of characters
  * 

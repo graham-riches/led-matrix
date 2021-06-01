@@ -1,4 +1,4 @@
-/*! \file main.cpp
+    /*! \file main.cpp
 *
 *  \brief main application entry point
 *
@@ -16,6 +16,7 @@
 #include "font.hpp"
 #include "graphics.hpp"
 #include "interval_timer.hpp"
+#include "tasks.hpp"
 #include <boost/asio.hpp>
 #include <chrono>
 #include <cstdint>
@@ -24,7 +25,7 @@
 #include <thread>
 #include <vector>
 #include <thread>
-#include <future>
+
 
 
 /********************************** Types and Aliases *******************************************/
@@ -33,6 +34,11 @@ using json = nlohmann::json;
 
 //!< alias for an expected of set pixel
 using expected_timer_config = expected<graphics::clocks::interval_timer::configuration, std::exception_ptr>;
+
+
+/********************************** Local Variables *******************************************/
+static std::unique_ptr<IntervalTimerTask> task;
+
 
 /****************************** Function Definitions ***********************************/
 /**
@@ -61,15 +67,12 @@ expected_timer_config timer_from_json(const json& data) {
  * \param stats_font font to draw the stats with
  * \param frame graphics frame to draw on
  */
-void spawn_timer(const graphics::clocks::interval_timer::configuration& config, fonts::font& time_font, fonts::font& stats_font, graphics::frame& frame) {   
-   auto timer_draw_thread = [&]() {
-       auto timer = graphics::clocks::interval_timer(graphics::origin{0, 0}, time_font, stats_font, config );
-       while ( !timer.is_complete() ) {
-           timer.draw(frame);
-           std::this_thread::sleep_for(std::chrono::milliseconds(50));
-       }       
-   };
-   std::async(std::launch::async, timer_draw_thread);
+void spawn_timer(const graphics::clocks::interval_timer::configuration& config, fonts::font& time_font, fonts::font& stats_font, graphics::frame& frame) {          
+    if (task) {        
+        task->cancel();
+    }    
+    task = std::make_unique<IntervalTimerTask>(config, time_font, stats_font, frame);
+    task->start();
 }
 
 /**
@@ -81,19 +84,16 @@ void spawn_timer(const graphics::clocks::interval_timer::configuration& config, 
  */
 int main(int argc, char* argv[]) {
     //!< open the json configuration file and parse it into an expected ADT which contains either valid JSON or an error message
-    json config = json::parse(std::ifstream{"config.json"});
+    json config = json::parse(std::ifstream{"/home/pi/led-matrix/config.json"});
 
+    //!< read the matrix configuration from json
     auto maybe_options = create_options_from_json(config);
-    if ( !maybe_options ) {        
-        std::cout << maybe_options.get_error() << std::endl;
-        return -1;
-    }    
     auto options = maybe_options.get_value();
     
     //!< load the fonts
-    auto maybe_time_font = fonts::font::from_stream(std::ifstream{std::string{"graphics/fonts/7x13B.bdf"}});
+    auto maybe_time_font = fonts::font::from_stream(std::ifstream{std::string{"/home/pi/led-matrix/graphics/fonts/7x13B.bdf"}});
     auto time_font = maybe_time_font.get_value();
-    auto maybe_stats_font = fonts::font::from_stream(std::ifstream{std::string{"graphics/fonts/5x8.bdf"}});
+    auto maybe_stats_font = fonts::font::from_stream(std::ifstream{std::string{"/home/pi/led-matrix/graphics/fonts/5x8.bdf"}});
     auto stats_font = maybe_stats_font.get_value();
 
     //!< create the RGB Matrix object from the validated options.    
@@ -101,7 +101,16 @@ int main(int argc, char* argv[]) {
     matrix->StartRefresh();  //!< unfortunately this manages it's own pthread :(
 
     //!< create a graphics frame object to render text messages recevied over TCP    
-    auto frame = graphics::frame(matrix.get());    
+    auto frame = graphics::frame(matrix.get());
+
+    //!< quick hack to render a boot screen
+    for (int i = 0; i < options.options.rows; i++) {
+        for (int j = 0; j < options.options.cols; j++) {
+            matrix->SetPixel(j, i, 255, 255, 255);
+        }
+    }
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    matrix->Clear();
 
     //!< create a vector of threads to hold the threads that will do the other application work
     std::vector<std::thread> threads;
@@ -111,6 +120,7 @@ int main(int argc, char* argv[]) {
     boost::asio::io_service service;
     
     auto io_pipeline = io_service(service) 
+                     | transform( [](const std::string& message){ std::cout << message << std::endl; return message; } )
                      | transform( [](const std::string& message) { return reactive::mtry([&] { return json::parse(message); }); })
                      | transform( [](const auto& exp) { return mbind(exp, timer_from_json); } )
                      | filter( [](const auto& exp){ return (exp); } )

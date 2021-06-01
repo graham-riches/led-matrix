@@ -27,14 +27,27 @@
 /********************************** Types *******************************************/
 namespace graphics::clocks {
 
+/**
+ * \brief helper object that manages a down-counting timer
+ */
 class downcounting_timer {
 public:
     using time_point_t = std::chrono::time_point<std::chrono::system_clock>;
 
+    /**
+     * \brief Construct a new downcounting timer object
+     * 
+     * \param time_ms time in ms to count down for
+     */
     downcounting_timer( uint32_t time_ms )
     : start_time(std::chrono::system_clock::now())
     , total_time_ms(time_ms) {}
 
+    /**
+     * \brief update method to check the timer
+     * 
+     * \retval uint32_t time remaining
+     */
     uint32_t update() {
         auto now = std::chrono::system_clock::now();
         auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - start_time);              
@@ -42,6 +55,11 @@ public:
         return time_remaining;
     }
 
+    /**
+     * \brief check if the timer is expired
+     * 
+     * \retval true if the targetted time has passed     
+     */
     bool is_elapsed() {
         return (time_remaining == 0);
     }
@@ -53,10 +71,9 @@ private:
 };
 
 
-
-
-
-
+/**
+ * \brief interval timer object that manages a high-low interval and displays graphically
+ */
 class interval_timer : public shape {
 public:    
     /**
@@ -90,7 +107,7 @@ public:
      * \param stats_font the font to draw the stats with
      * \param config timer configuration
      */
-    interval_timer(graphics::origin origin,
+    interval_timer(graphics::origin origin,                   
                    fonts::font& time_font,
                    fonts::font& stats_font,
                    configuration config)
@@ -99,7 +116,7 @@ public:
     , stats_font(stats_font)
     , config(config)
     , elapsed_low_intervals(0)
-    , elapsed_high_interval(0)
+    , elapsed_high_intervals(0)
     , total_repeats_complete(0)
     , current_time_remaining(0)
     , m_state(timer_state::warmup) 
@@ -114,7 +131,7 @@ public:
         time_font_vertical_offset = static_cast<uint8_t>(time_font_bbox.height);
         stats_font_vertical_offset = static_cast<uint8_t>(stats_font_bbox.height);
     }
-    
+
     /**
      * \brief update the timer and draw to the screen
      * 
@@ -188,7 +205,7 @@ private:
             case timer_state::high:
                 if ( m_timer->is_elapsed() )
                 {                    
-                    elapsed_high_interval++;
+                    elapsed_high_intervals++;
                     m_timer = std::make_unique<downcounting_timer>(config.low_interval_ms);
                     m_state = timer_state::low;
                 }
@@ -212,7 +229,7 @@ private:
                         m_state = timer_state::complete;
                     } else {
                         elapsed_low_intervals = 0;
-                        elapsed_high_interval = 0;
+                        elapsed_high_intervals = 0;
                         m_state = timer_state::high;
                         m_timer = std::make_unique<downcounting_timer>(config.high_interval_ms);
                     }                    
@@ -231,8 +248,8 @@ private:
     //!< Private member variables
     fonts::font time_font;
     fonts::font stats_font;
-    const configuration config;
-    uint32_t elapsed_high_interval;
+    configuration config;
+    uint32_t elapsed_high_intervals;
     uint32_t elapsed_low_intervals; 
     uint8_t total_repeats_complete;  
     uint32_t current_time_remaining;    
