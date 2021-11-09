@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.1...3.15)
 
-# RUN: cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=toolchain/Toolchain-RaspberryPi.cmake -DBoost_NO_BOOST_CMAKE=TRUE -DBOOST_ROOT:PATHNAME=/mnt/d/code/Environments/boost_1_71_0/ -DBoost_INCLUDE_DIR:PATHNAME=/mnt/d/code/Environments/boost_1_71_0/
-
 # create the project name
 project(led_matrix)
 
@@ -41,7 +39,7 @@ include_directories(
 )
 
 # add custom build compiler flags
-SET(GCC_CFLAGS "-g -O0 -Wno-psabi")
+SET(GCC_CFLAGS "-g0 -O2 -Wno-psabi")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_CFLAGS}")
 
 # build any sub directories

@@ -74,7 +74,7 @@ class IntervalTimerTask : public ICancellableTask {
         auto task = [&]() {
             while ( !timer->is_complete() && !cancellation_token ) {
                 timer->draw(frame);
-                std::this_thread::sleep_for(std::chrono::milliseconds(50));
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
         };
         task_thread = std::thread(task);

@@ -142,13 +142,21 @@ public:
 
         //!< update the timer
         update();
+        auto current_time = std::chrono::system_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - m_last_draw_time);
+        
+        // Slight hack to only draw if we've elapsed enough time to make it worthwhile
+        if ( duration.count() < 100 ) {
+            m_last_draw_time = current_time;
+            return canvas;
+        }
 
         //!< print out the time remaining
         std::string state_string = (m_state == timer_state::warmup) ? "W:"
                                  : (m_state == timer_state::high)   ? "H:"
                                  : (m_state == timer_state::low)    ? "L:"
                                  : "C:";
-        std::string time_remaining = fmt::format("{:s} {:.2f}", state_string, current_time_remaining / 1000.0f );
+        std::string time_remaining = fmt::format("{:s} {:.1f}", state_string, current_time_remaining / 1000.0f );
         graphics::pixel color = (m_state == timer_state::warmup) ? graphics::pixel{255, 128, 128}
                               : (m_state == timer_state::high)   ? graphics::pixel{255, 255, 0}
                               : (m_state == timer_state::low)    ? graphics::pixel{0, 255, 0}
@@ -192,7 +200,7 @@ private:
      */
     void update() {
         current_time_remaining = m_timer->update();        
-
+        
         switch ( m_state ) {
             case timer_state::warmup:
                 if ( m_timer->is_elapsed() )
@@ -257,6 +265,7 @@ private:
     timer_state m_state;
     uint8_t time_font_vertical_offset;
     uint8_t stats_font_vertical_offset;
+    std::chrono::time_point<std::chrono::system_clock> m_last_draw_time;
 };
 
 };
