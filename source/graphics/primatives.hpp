@@ -1,6 +1,5 @@
 /**
- * \file primatives.hpp
- * \author Graham Riches (graham.riches@live.com)
+ * \file primatives.hpp 
  * \brief graphics primatives that are used to stitch together more complex scenes from basic objects
  * \version 0.1
  * \date 2021-02-09
@@ -12,10 +11,10 @@
 #pragma once
 
 /********************************** Includes *******************************************/
+#include "canvas.h"
 #include <cstdint>
 #include <utility>
 #include <vector>
-#include "canvas.h"
 
 namespace graphics
 {
@@ -30,20 +29,18 @@ struct origin {
     uint16_t y;
 };
 
-/**
- * \brief structure containing the color RGB value of a pixel
- */
+// Color encoding of pixels in RGB. Values range from 0 to 255 (off to fully on)
 struct pixel {
     uint8_t red;
     uint8_t green;
-    uint8_t blue;    
+    uint8_t blue;
 };
 
 /**
  * \brief frame object that contains a 2D array of pixels that are drawn onto. 
  * \note this is an adapter for the canvas interface
  */
-class frame  {
+class frame {
   public:
     /**
      * \brief Construct a new frame object from a led matrix canvas pointer
@@ -100,7 +97,7 @@ class frame  {
      */
     void fill(uint8_t red, uint8_t green, uint8_t blue);
 
-  private:    
+  private:
     rgb_matrix::Canvas* _canvas;
 };
 
@@ -109,9 +106,9 @@ class frame  {
  */
 struct shape {
     origin _origin;
-    
+
     shape(const origin& origin)
-    : _origin(origin) {}
+        : _origin(origin) { }
 
     virtual frame& draw(frame& canvas) = 0;
 };

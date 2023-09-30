@@ -1,6 +1,5 @@
 /**
- * \file primatives.cpp
- * \author Graham Riches (graham.riches@live.com)
+ * \file primatives.cpp 
  * \brief contains definitions for some graphics primatives
  * \version 0.1
  * \date 2021-02-13
@@ -21,7 +20,7 @@ namespace graphics
  * \param canvas pointer to the canvas
  */
 frame::frame(rgb_matrix::Canvas* canvas)
-: _canvas(canvas) { }
+    : _canvas(canvas) { }
 
 /**
  * \brief set the value of a pixel in the frame from a reference pixel
@@ -31,7 +30,7 @@ frame::frame(rgb_matrix::Canvas* canvas)
  * \param pixel the pixel to set
  */
 void frame::set_pixel(int x, int y, const pixel& pixel) {
-    if ((x < _canvas->width()) && (y < _canvas->height())) {
+    if ( (x < _canvas->width()) && (y < _canvas->height()) ) {
         _canvas->SetPixel(x, y, pixel.red, pixel.green, pixel.blue);
     }
 }
@@ -46,7 +45,7 @@ void frame::set_pixel(int x, int y, const pixel& pixel) {
  * \param blue pixel B value
  */
 void frame::set_pixel(int x, int y, uint8_t red, uint8_t green, uint8_t blue) {
-    if ((x < _canvas->width()) && (y < _canvas->height())) {
+    if ( (x < _canvas->width()) && (y < _canvas->height()) ) {
         _canvas->SetPixel(x, y, red, green, blue);
     }
 }
@@ -69,7 +68,6 @@ void frame::fill(uint8_t red, uint8_t green, uint8_t blue) {
     _canvas->Fill(red, green, blue);
 }
 
-
 /**
  * \brief getter for the width of the frame
  * 
@@ -88,5 +86,4 @@ int frame::height(void) const {
     return _canvas->height();
 }
 
-
-};
+};  // namespace graphics

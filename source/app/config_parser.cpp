@@ -1,9 +1,7 @@
 /*! \file config_parser.cpp
 *
 *  \brief parsing and validation for application configuration stored as JSON
-*
-*
-*  \author Graham Riches
+
 */
 /********************************** Includes *******************************************/
 #include "config_parser.hpp"
@@ -83,14 +81,13 @@ configuration_options::configuration_options(const configuration_options& other)
     app_options = other.app_options;
     runtime_options = other.runtime_options;
     options = other.options;
-    
-    //!< point the led matrix string settings to the correct pointers since it uses char pointers instead of strings..
+
+    // point the led matrix string settings to the correct pointers since it uses char pointers instead of strings..
     options.hardware_mapping = string_options.hardware_mapping.c_str();
     options.panel_type = string_options.panel_type.c_str();
     options.led_rgb_sequence = string_options.led_rgb_sequence.c_str();
-    options.pixel_mapper_config = string_options.pixel_mapper_config.c_str();    
+    options.pixel_mapper_config = string_options.pixel_mapper_config.c_str();
 }
-
 
 /**
  * \brief parse configuration options from JSON into matrix options struct. Returns an RGB matrix object if the
@@ -106,7 +103,7 @@ expected<configuration_options, std::string> create_options_from_json(json& conf
         auto option = get_value(flag_options, key);
         if ( option ) {
             switch ( option.value() ) {
-                case options::hardware_mapping:                    
+                case options::hardware_mapping:
                     options.string_options.hardware_mapping = std::string{value};
                     options.options.hardware_mapping = options.string_options.hardware_mapping.c_str();
                     break;

@@ -1,6 +1,5 @@
 /**
- * \file io_service.h
- * \author Graham Riches (graham.riches@live.com)
+ * \file io_service.h 
  * \brief classes for managing io as an asynchronous service
  * \version 0.1
  * \date 2021-01-28
@@ -50,7 +49,7 @@ class io_session : public std::enable_shared_from_this<io_session<EmitFunction>>
     }
 
   private:
-    //!< alias to remove some boilerplate while using std::enable_shared_from_this below
+    // alias to remove some boilerplate while using std::enable_shared_from_this below
     using shared_session = std::enable_shared_from_this<io_session<EmitFunction>>;
 
     /**
@@ -60,18 +59,18 @@ class io_session : public std::enable_shared_from_this<io_session<EmitFunction>>
      * 
      */
     void async_read() {
-        auto self = shared_session::shared_from_this();  //!< creates a new std::shared_ptr reference to the current object
+        auto self = shared_session::shared_from_this();  // creates a new std::shared_ptr reference to the current object
         boost::asio::async_read_until(_socket, _data, '\n', [this, self](auto& error, auto size) {
             std::istream in_stream(&_data);
             std::string line;
             std::getline(in_stream, line);
             _emitter(std::move(line));
 
-            async_read();  //!< re-start the read to keep the session alive
+            async_read();  // re-start the read to keep the session alive
         });
     }
 
-    //!< private members
+    // private members
     boost::asio::streambuf _data;
     tcp::socket _socket;
     EmitFunction _emitter;
@@ -98,7 +97,7 @@ class io_service {
     using tcp = boost::asio::ip::tcp;
 
   public:
-    //!< convenience alias to let other classes pluck off the message type of the session. TODO: could be templated to be more generic
+    // convenience alias to let other classes pluck off the message type of the session. TODO: could be templated to be more generic
     using value_type = std::string;
 
     /**
@@ -111,7 +110,7 @@ class io_service {
         : _acceptor(service, tcp::endpoint{tcp::v4(), port})
         , _socket(service) { }
 
-    //!< disable copy construction and allow moves
+    // disable copy construction and allow moves
     io_service(const io_service& other) = delete;
     io_service(io_service&& other) = default;
 
@@ -123,7 +122,7 @@ class io_service {
      */
     template <typename EmitFunction>
     void set_message_emit_handler(EmitFunction emitter) {
-        //!< once a handler is register, start accepting connections as the messages have somewhere to go!
+        // once a handler is register, start accepting connections as the messages have somewhere to go!
         _emitter = emitter;
         accept_connections();
     }
@@ -133,21 +132,21 @@ class io_service {
      * \brief accept connections over TCP and create a new session object for each client
      */
     void accept_connections() {
-        //!< wait for connections, and pass a lambda as the connection handler function
+        // wait for connections, and pass a lambda as the connection handler function
         _acceptor.async_accept(_socket, [this](const boost::system::error_code& error) {
             if ( !error ) {
-                //!< move the ownership of the socket into the session and start the session
+                // move the ownership of the socket into the session and start the session
                 auto session = make_shared_session(std::move(_socket), _emitter);
                 session->start();
             } else {
                 std::cerr << error.message() << std::endl;
             }
 
-            accept_connections();  //!< listen for new connections
+            accept_connections();  // listen for new connections
         });
     }
 
-    //!< private members
+    // private members
     tcp::acceptor _acceptor;
     tcp::socket _socket;
     std::function<void(std::string&&)> _emitter;

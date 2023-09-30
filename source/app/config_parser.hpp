@@ -2,9 +2,6 @@
 *
 *  \brief config_parser module for parsing a configuration JSON file into a validated
 *         configuration structure for the matrix and other application components.
-*
-*
-*  \author Graham Riches
 */
 #pragma once
 
@@ -12,9 +9,9 @@
 #include "expected.hpp"
 #include "led-matrix.h"
 #include "nlohmann/json.hpp"
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
 
 using json = nlohmann::json;
 

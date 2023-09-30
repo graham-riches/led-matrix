@@ -26,11 +26,14 @@ add_custom_target( BuildVersionHeader ALL DEPENDS version.h )
 # set the include directories for the project
 include_directories(
     ${CMAKE_SOURCE_DIR}/source
+    ${CMAKE_SOURCE_DIR}/source/app
+    ${CMAKE_SOURCE_DIR}/source/app/clocks
+    ${CMAKE_SOURCE_DIR}/source/app/tasks    
+    ${CMAKE_SOURCE_DIR}/source/graphics
+    ${CMAKE_SOURCE_DIR}/source/graphics/fonts    
+    ${CMAKE_SOURCE_DIR}/source/graphics/utilities
     ${CMAKE_SOURCE_DIR}/source/io
     ${CMAKE_SOURCE_DIR}/source/reactive
-    ${CMAKE_SOURCE_DIR}/source/fonts
-    ${CMAKE_SOURCE_DIR}/source/graphics
-    ${CMAKE_SOURCE_DIR}/source/graphics/clocks
 	${CMAKE_SOURCE_DIR}/modules/rpi-rgb-led-matrix/include
     ${CMAKE_SOURCE_DIR}/modules/rpi-rgb-led-matrix/lib
     ${CMAKE_SOURCE_DIR}/modules/json/include

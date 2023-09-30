@@ -1,6 +1,5 @@
 /**
- * \file io_sinks.hpp
- * \author Graham Riches (graham.riches@live.com)
+ * \file io_sinks.hpp 
  * \brief 
  * \version 0.1
  * \date 2021-01-29

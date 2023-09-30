@@ -2,9 +2,6 @@
 *
 *  \brief expected algebraic data type for error handling. This essentially an either type
 *         or an expanded optional that returns either the type, or a custom error type.
-*
-*
-*  \author Graham Riches
 */
 #pragma once
 

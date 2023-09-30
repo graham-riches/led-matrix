@@ -1,6 +1,5 @@
 /**
- * \file mtry.hpp
- * \author Graham Riches (graham.riches@live.com)
+ * \file mtry.hpp 
  * \brief try-catch exception handling monad
  * \version 0.1
  * \date 2021-01-31

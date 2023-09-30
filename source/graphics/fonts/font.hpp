@@ -1,6 +1,5 @@
 /**
- * \file font.hpp
- * \author Graham Riches (graham.riches@live.com)
+ * \file font.hpp 
  * \brief bdf font file parser
  * \version 0.1
  * \date 2021-02-02
@@ -12,15 +11,15 @@
 #pragma once
 
 /********************************** Includes *******************************************/
-#include "expected.hpp"
 #include "character.hpp"
+#include "expected.hpp"
 #include <cstdint>
 #include <istream>
 #include <map>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
-#include <optional>
 
 namespace fonts
 {
@@ -106,6 +105,6 @@ class font {
     std::optional<bounding_box> get_bbox();
 
   private:
-    std::map<int, character> _characters;  //!< maps ascii character values to the character object
+    std::map<int, character> _characters;  // maps ascii character values to the character object
 };
 };  // namespace fonts

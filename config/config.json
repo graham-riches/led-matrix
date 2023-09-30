@@ -20,5 +20,5 @@
     "limit_refresh_rate": 60,
     "slowdown": 4,
     "daemonize": "manual",
-    "font": "7x13B.bdf"
+    "font": "10x20.bdf"
 }

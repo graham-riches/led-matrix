@@ -97,7 +97,14 @@
         "queue": "cpp",
         "span": "cpp",
         "valarray": "cpp",
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "format": "cpp",
+        "hash_map": "cpp",
+        "numbers": "cpp",
+        "ranges": "cpp",
+        "semaphore": "cpp",
+        "stdfloat": "cpp",
+        "stop_token": "cpp"
     },
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true,

@@ -1,6 +1,5 @@
 /**
- * \file io_transform.hpp
- * \author Graham Riches (graham.riches@live.com)
+ * \file io_transform.hpp 
  * \brief defines transformation operators on reactive IO streams
  * \version 0.1
  * \date 2021-01-31
@@ -54,7 +53,7 @@ class transform_impl {
     template <typename EmitFunction>
     void set_message_emit_handler(EmitFunction emitter) {
         _emitter = emitter;
-        //!< create a lambda to register as the emitter for the previous connection in the chain
+        // create a lambda to register as the emitter for the previous connection in the chain
         _sender.set_message_emit_handler([this](SourceMessageType&& message) { process_message(std::move(message)); });
     }
 

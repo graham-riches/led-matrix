@@ -1,9 +1,6 @@
 /*! \file string_utilities.hpp
 *
 *  \brief a set of useful string functions I've needed many times
-* 
-*
-*  \author Graham Riches
 */
 
 #pragma once
