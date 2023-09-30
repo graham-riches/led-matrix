@@ -1,22 +1,10 @@
-/**
- * \file simple_clock.hpp 
- * \brief A simple clock for displaying the time
- * \version 0.1
- * \date 2023-09-11
- * 
- * @copyright Copyright (c) 2023
- * 
- */
+// A simple clock display
 
 #pragma once
 
-/********************************** Includes *******************************************/
 #include "fmt/chrono.h"
 #include "fmt/core.h"
-#include "font.hpp"
 #include "graphics.hpp"
-#include "primatives.hpp"
-#include <algorithm>
 #include <chrono>
 #include <cstdint>
 #include <memory>
@@ -24,11 +12,10 @@
 #include <utility>
 #include <vector>
 
-/********************************** Types *******************************************/
 namespace graphics::clocks
 {
 
-class simple_clock : public shape {
+class simple_clock : protected shape {
   public:
     using timestamp = std::chrono::time_point<std::chrono::system_clock>;
 
@@ -36,26 +23,27 @@ class simple_clock : public shape {
         : shape(origin)
         , font(font) { }
 
-    frame& draw(frame& canvas) {
+    void draw(canvas& canvas) {
         auto now = std::chrono::system_clock::now();
         auto delta = std::chrono::duration_cast<std::chrono::seconds>(now - last_draw_time);
         if ( delta.count() == 0 ) {
-            return canvas;
+            return;
         }
+
         last_draw_time = now;
         canvas.clear();
 
-        auto time_string = fmt::format("{:%H:%M}", now);
+        auto local = std::chrono::system_clock::to_time_t(now);
+        auto time_string = fmt::format("{:%H:%M}", fmt::localtime(local));
         auto time_characters = font.encode_with_default(time_string, ' ');
         auto time_renderer = graphics::text_box(time_characters,
-                                                graphics::origin{_origin.x, _origin.y},
+                                                graphics::origin{m_origin.x, m_origin.y},
                                                 color,
                                                 canvas.width(),
                                                 canvas.height(),
                                                 graphics::horizontal_alignment::center,
                                                 graphics::vertical_alignment::center);
-        time_renderer.draw(canvas);
-        return canvas;
+        time_renderer.draw(canvas);        
     }
 
   private:

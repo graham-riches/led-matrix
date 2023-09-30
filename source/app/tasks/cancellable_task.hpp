@@ -1,12 +1,3 @@
-/**
- * \file if_cancellable_task.hpp 
- * \brief Interface for a cancellable task
- * \version 0.1
- * \date 2023-09-11
- * 
- * @copyright Copyright (c) 2023
- * 
- */
 
 #pragma once
 

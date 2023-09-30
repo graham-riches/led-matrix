@@ -1,14 +1,5 @@
-/**
- * \file character.cpp
- * \brief method declarations for character objects
- * \version 0.1
- * \date 2021-02-06
- * 
- * @copyright Copyright (c) 2021
- * 
- */
+// RGB LED Matrix Graphics Library
 
-/********************************** Includes *******************************************/
 #include "font.hpp"
 #include "range/v3/all.hpp"
 #include "string_utilities.hpp"
@@ -18,12 +9,12 @@
 #include <sstream>
 #include <string>
 
-/********************************** Constants *******************************************/
 #define INTEGER_HEX_BASE (16ul)
 
+namespace graphics {
 namespace fonts
 {
-/********************************** Local Function Definitions *******************************************/
+
 /**
  * \brief convert a stringview into an int representation
  * 
@@ -66,24 +57,15 @@ std::map<std::string_view, std::vector<int>> kv_pairs_to_map(const std::vector<k
     return map;
 }
 
-/********************************** Public Function Definitions *******************************************/
-/**
- * \brief factor method to create a bounding box object from a string view
- * 
- * \param view the string view to create the box from
- * \retval expected<bounding_box, std::string> containing either the box, or an error message
- */
+
+//-----------------------------------------------------------------------------
 expected<bounding_box, std::string> bounding_box::from_stringview(const std::string_view& view) {
     key_value_pair<int> kv_pair = to_property_kv_pair(view);
     return bounding_box::from_key_value_pair(kv_pair);
 }
 
-/**
- * \brief factory method to create a bounding box from a key_value pair object
- * 
- * \param kv_pair the key_value pair object
- * \retval expected<bounding_box, std::string> bounding box object if no errors, otherwise error string
- */
+
+//-----------------------------------------------------------------------------
 expected<bounding_box, std::string> bounding_box::from_key_value_pair(const key_value_pair<int>& kv_pair) {
     return (kv_pair.key != "BBX") ? expected<bounding_box, std::string>::error("Invalid key for constructor")
            : (kv_pair.values.size() != 4)
@@ -91,12 +73,8 @@ expected<bounding_box, std::string> bounding_box::from_key_value_pair(const key_
                : expected<bounding_box, std::string>::success(bounding_box(kv_pair.values[0], kv_pair.values[1], kv_pair.values[2], kv_pair.values[3]));
 }
 
-/**
- * \brief factory method to create a character properties structure from a map
- * 
- * \param map the map containing the property tags as keys and the values as fields
- * \retval expected<character_properties, std::string> 
- */
+
+//-----------------------------------------------------------------------------
 expected<character_properties, std::string> character_properties::from_map(const std::map<std::string_view, std::vector<int>>& map) {
     try {
         auto scalable_width = std::make_pair<uint16_t, uint16_t>(map.at("SWIDTH")[0], map.at("SWIDTH")[1]);
@@ -116,12 +94,8 @@ expected<character_properties, std::string> character_properties::from_map(const
     }
 }
 
-/**
- * \brief convert a vector of lines into a character structure
- * 
- * \param encoding character encoded as a string
- * \retval expected<character, std::string> expected of character or an error
- */
+
+//-----------------------------------------------------------------------------
 expected<character, std::string> character::from_string(const std::string& encoding) {
     // splits the string by endlines, converts to string views, and splits into two ranges containing: properties, character bitmapping
     auto properties = encoding | ranges::views::split('\n') |
@@ -160,3 +134,4 @@ expected<character, std::string> character::from_string(const std::string& encod
     return expected<character, std::string>::success(character{std::move(c_properties), std::move(bit_encoding)});
 }
 };  // namespace fonts
+};

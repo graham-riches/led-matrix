@@ -1,11 +1,7 @@
-/*! \file string_utilities.hpp
-*
-*  \brief a set of useful string functions I've needed many times
-*/
+// RGB LED Matrix Graphics Library
 
 #pragma once
 
-/********************************** Includes *******************************************/
 #include <fstream>
 #include <iostream>
 #include <ostream>
@@ -14,7 +10,7 @@
 #include <string>
 #include <vector>
 
-/****************************** Function Definitions ***********************************/
+
 namespace string_helpers
 {
 /**

@@ -1,12 +1,4 @@
-/**
- * \file alignment.hpp  
- * \brief Graphics alignment options
- * \version 0.1
- * \date 2023-09-29
- * 
- * @copyright Copyright (c) 2023
- * 
- */
+// RGB LED Matrix Graphics Library
 
 #pragma once
 

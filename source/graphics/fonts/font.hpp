@@ -1,16 +1,7 @@
-/**
- * \file font.hpp 
- * \brief bdf font file parser
- * \version 0.1
- * \date 2021-02-02
- * 
- * @copyright Copyright (c) 2021
- * 
- */
+// RGB LED Matrix Graphics Library
 
 #pragma once
 
-/********************************** Includes *******************************************/
 #include "character.hpp"
 #include "expected.hpp"
 #include <cstdint>
@@ -21,13 +12,13 @@
 #include <utility>
 #include <vector>
 
+namespace graphics
+{
 namespace fonts
 {
-/**
- * \brief font object that contains the character encoding for each ascii character in it's binary
- *        encoded equivalent. This provides functions to transform char and string inputs into pixel
- *        mappings.
- */
+// Font object that contains the character encoding for each ascii character in it's binary
+// encoded equivalent. This provides functions to transform char and string inputs into pixel
+// mappings.
 class font {
   public:
     /**
@@ -52,6 +43,14 @@ class font {
      * \retval expected<font, std::string> 
      */
     static expected<font, std::string> from_stream(std::istream&& stream);
+
+    /**
+     * \brief Factory method to load a font from a filepath
+     * 
+     * \param path Path to the font file
+     * \retval expected<font, std::string> 
+     */
+    static expected<font, std::string> load_from_path(const std::string& path);
 
     /**
      * \brief Get a character by its encoding value
@@ -105,6 +104,7 @@ class font {
     std::optional<bounding_box> get_bbox();
 
   private:
-    std::map<int, character> _characters;  // maps ascii character values to the character object
+    std::map<int, character> m_characters;  // maps ascii character values to the character object
 };
 };  // namespace fonts
+};  // namespace graphics

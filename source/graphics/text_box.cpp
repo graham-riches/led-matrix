@@ -1,18 +1,10 @@
-/**
- * \file text_box.cpp
- * \brief contains functions and methods for drawing font objects
- * \version 0.1
- * \date 2021-02-09
- * 
- * @copyright Copyright (c) 2021
- * 
- */
+// RGB LED Matrix Graphics Library
 
-/********************************** Includes *******************************************/
 #include "text_box.hpp"
 
 namespace graphics
 {
+//-----------------------------------------------------------------------------
 text_box::text_box(const std::vector<fonts::character>& characters,
                    graphics::origin origin,
                    pixel& color,
@@ -28,12 +20,14 @@ text_box::text_box(const std::vector<fonts::character>& characters,
     , h_align(h_align)
     , v_align(v_align) { }
 
-frame& text_box::draw(frame& canvas) {
+
+//-----------------------------------------------------------------------------
+void text_box::draw(canvas& canvas) {
     auto char_width = characters[0].properties.b_box.width;
     auto char_height = characters[0].properties.b_box.height;
     auto string_width = characters.size() * char_width;
-    int x_position = _origin.x;
-    int y_position = _origin.y;
+    int x_position = m_origin.x;
+    int y_position = m_origin.y;
 
     if ( string_width < width ) {
         if ( h_align == horizontal_alignment::center ) {
@@ -72,8 +66,7 @@ frame& text_box::draw(frame& canvas) {
 
         // update the x-draw position for the next character
         x_position += bbox.width;
-    }
-    return canvas;
+    }    
 }
 
 };  // namespace graphics

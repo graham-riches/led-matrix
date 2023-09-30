@@ -1,19 +1,14 @@
-/*! \file config_parser.cpp
-*
-*  \brief parsing and validation for application configuration stored as JSON
+// RGB LED Matrix Graphics Library
 
-*/
-/********************************** Includes *******************************************/
 #include "config_parser.hpp"
 #include <algorithm>
 #include <functional>
 #include <iostream>
 #include <map>
 
-/********************************** Types and Aliases *******************************************/
-/**
- * \brief enumeration of all command line options
- */
+namespace graphics {
+
+// All option types
 enum class options : unsigned {
     hardware_mapping,
     panel_type,
@@ -39,11 +34,20 @@ enum class options : unsigned {
     font
 };
 
-/********************************** Local Function Declarations *******************************************/
-template <typename ReturnType, typename Key>
-std::optional<ReturnType> get_value(const std::map<Key, ReturnType>& map, Key key);
 
-/********************************** Local Variables *******************************************/
+// Helper to convert std::map get into optional
+template <typename ReturnType, typename Key>
+std::optional<ReturnType> get_value(const std::map<Key, ReturnType>& map, Key key) {
+    for ( const auto& [k, v] : map ) {
+        if ( k == key ) {
+            return v;
+        }
+    }
+    return {};
+}
+
+
+// Maps options struct to RGB led matrix library CLI arguments
 const std::map<std::string, options> flag_options = {{"hardware_mapping", options::hardware_mapping},
                                                      {"panel_type", options::panel_type},
                                                      {"scan_mode", options::scan_mode},
@@ -69,33 +73,23 @@ const std::map<std::string, options> flag_options = {{"hardware_mapping", option
 
 static const std::map<std::string, int> daemon_settings = {{"manual", -1}, {"on", 1}, {"off", 0}};
 
-/********************************** Public Function Definitions *******************************************/
-/**
- * \brief Construct a new Configuration Options object by copy, which requires
- *        a deep copy to reset the string pointers
- * 
- * \param other the other to copy from
- */
+
+// Copy construct configuration options - requires deep copying some items
 configuration_options::configuration_options(const configuration_options& other) {
     string_options = other.string_options;
     app_options = other.app_options;
     runtime_options = other.runtime_options;
     options = other.options;
 
-    // point the led matrix string settings to the correct pointers since it uses char pointers instead of strings..
+    // Point the led matrix string settings to the correct pointers since it uses char pointers instead of strings..
     options.hardware_mapping = string_options.hardware_mapping.c_str();
     options.panel_type = string_options.panel_type.c_str();
     options.led_rgb_sequence = string_options.led_rgb_sequence.c_str();
     options.pixel_mapper_config = string_options.pixel_mapper_config.c_str();
 }
 
-/**
- * \brief parse configuration options from JSON into matrix options struct. Returns an RGB matrix object if the
- *        options are valid.
- * 
- * \param config the json container to parse
- * \retval expected of options or a string if configuration is invalid
- */
+
+// Parse config options from JSON
 expected<configuration_options, std::string> create_options_from_json(json& config) {
     configuration_options options;
 
@@ -211,22 +205,4 @@ expected<configuration_options, std::string> create_options_from_json(json& conf
     }
 }
 
-/********************************** Local Function Definitions *******************************************/
-/**
- * \brief check if a key is contained in a map and return an optional
- * 
- * \tparam ReturnType the type value contained in the map
- * \tparam Key type of the key to the map
- * \param map std::map object that might contain the requested key
- * \param key the requested key
- * \retval std::optional<ReturnType> returns the value in the map at key if it exists
- */
-template <typename ReturnType, typename Key>
-std::optional<ReturnType> get_value(const std::map<Key, ReturnType>& map, Key key) {
-    for ( const auto& [k, v] : map ) {
-        if ( k == key ) {
-            return v;
-        }
-    }
-    return {};
 }

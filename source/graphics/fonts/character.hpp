@@ -1,16 +1,7 @@
-/**
- * \file character.hpp 
- * \brief definitions of a character object that is part of a font
- * \version 0.1
- * \date 2021-02-06
- * 
- * @copyright Copyright (c) 2021
- * 
- */
+// RGB LED Matrix Graphics Library
 
 #pragma once
 
-/********************************** Includes *******************************************/
 #include "expected.hpp"
 #include <cstdint>
 #include <istream>
@@ -19,32 +10,24 @@
 #include <utility>
 #include <vector>
 
+namespace graphics
+{
 namespace fonts
 {
-/********************************** Types *******************************************/
-/**
- * \brief structure to store a key value pair type
- * 
- * \tparam T type of the stored values
- */
+// Structure to store a key value pair type
 template <typename T>
 struct key_value_pair {
     std::string_view key;
     std::vector<T> values;
 };
 
-/**
- * \brief structure that contains the bounding box information for a font or glyph     
- */
+// Bounding box of a font type is the max size of a character
 struct bounding_box {
     int8_t width;     // width of the box
     int8_t height;    // height of the box
     int8_t x_origin;  // x-coordinate of the box origin
     int8_t y_origin;  // y-coordinate of the box origin
 
-    /**
-     * \brief bounding box constructor from raw integer values
-     */
     bounding_box(int8_t width, int8_t height, int8_t x_origin, int8_t y_origin)
         : width(width)
         , height(height)
@@ -68,9 +51,7 @@ struct bounding_box {
     static expected<bounding_box, std::string> from_key_value_pair(const key_value_pair<int>& kv_pair);
 };
 
-/**
- * \brief structure of character properties
- */
+// Character properties
 struct character_properties {
     uint16_t encoding;                             // ASCII decimal code value of the character
     std::pair<uint16_t, uint16_t> scalable_width;  // scalable width for DPI scaling
@@ -103,9 +84,7 @@ struct character_properties {
     static expected<character_properties, std::string> from_map(const std::map<std::string_view, std::vector<int>>& map);
 };
 
-/**
- * \brief structure representing a bdf encoded font character
- */
+// Bit-mapped font character
 struct character {
     character_properties properties;  // character properties structure
     std::vector<uint32_t> bitmap;     // bitmap of character pixel encodings stored as left aligned hex numbers
@@ -129,3 +108,4 @@ struct character {
     static expected<character, std::string> from_string(const std::string& encoding);
 };
 };  // namespace fonts
+};  // namespace graphics

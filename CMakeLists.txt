@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.15)
 
 # create the project name
 project(led_matrix)
@@ -29,8 +29,9 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/source/app
     ${CMAKE_SOURCE_DIR}/source/app/clocks
     ${CMAKE_SOURCE_DIR}/source/app/tasks    
-    ${CMAKE_SOURCE_DIR}/source/graphics
+    ${CMAKE_SOURCE_DIR}/source/graphics    
     ${CMAKE_SOURCE_DIR}/source/graphics/fonts    
+    ${CMAKE_SOURCE_DIR}/source/graphics/matrix
     ${CMAKE_SOURCE_DIR}/source/graphics/utilities
     ${CMAKE_SOURCE_DIR}/source/io
     ${CMAKE_SOURCE_DIR}/source/reactive

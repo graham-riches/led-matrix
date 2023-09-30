@@ -1,22 +1,15 @@
-/**
- * \file text_box.hpp
- * \brief contains rendering functionality for BDF fonts
- * \version 0.1
- * \date 2021-02-09
- * 
- * @copyright Copyright (c) 2021
- */
+// RGB LED Matrix Graphics Library
 
 #pragma once
 
 #include "alignment.hpp"
 #include "font.hpp"
-#include "primatives.hpp"
+#include "shape.hpp"
 #include <vector>
 
 namespace graphics
 {
-struct text_box : public shape {
+struct text_box : protected shape {
 
     text_box(const std::vector<fonts::character>& characters,
              graphics::origin origin,
@@ -26,8 +19,8 @@ struct text_box : public shape {
              horizontal_alignment h_align = horizontal_alignment::left,
              vertical_alignment v_align = vertical_alignment::top);
 
-    // Draw on the canvas and return it afterwards
-    frame& draw(frame& canvas);
+    // Draw on the canvas
+    void draw(canvas& canvas);
 
     std::vector<fonts::character> characters;
     pixel& color;

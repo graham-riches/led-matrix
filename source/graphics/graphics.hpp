@@ -1,14 +1,17 @@
-/**
- * \file graphics.hpp
- * \brief main graphics API include
- * \version 0.1
- * \date 2021-02-14
- * 
- * @copyright Copyright (c) 2021
- * 
- */
+// RGB LED Matrix Graphics Library
 
 #pragma once
 
-#include "primatives.hpp"
+
+// Include all components of the library
+#include "alignment.hpp"
+#include "canvas.hpp"
+#include "character.hpp"
+#include "config_parser.hpp"
+#include "font.hpp"
+#include "matrix.hpp"
+#include "origin.hpp"
+#include "pixel.hpp"
 #include "text_box.hpp"
+#include "shape.hpp"
+

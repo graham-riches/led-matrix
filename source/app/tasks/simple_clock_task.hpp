@@ -1,12 +1,4 @@
-/**
- * \file simple_clock_task.hpp 
- * \brief Task for displaying the simple clock
- * \version 0.1
- * \date 2023-09-11
- * 
- * @copyright Copyright (c) 2023
- * 
- */
+
 
 #pragma once
 
@@ -20,16 +12,16 @@
 
 class simple_clock_task : public tasks::cancellable_task {
   public:
-    simple_clock_task(fonts::font& font, graphics::frame& frame)
+    simple_clock_task(graphics::fonts::font& font, graphics::canvas& canvas)
         : tasks::cancellable_task([&]() {
-            clock->draw(frame);
+            clock->draw(canvas);
             return true;
         })
         , clock(std::make_unique<graphics::clocks::simple_clock>(graphics::origin{0, 0}, font))
-        , frame(frame) { }
+        , canvas(canvas) { }
 
   private:
     // Private members
     std::unique_ptr<graphics::clocks::simple_clock> clock;
-    graphics::frame& frame;
+    graphics::canvas& canvas;
 };

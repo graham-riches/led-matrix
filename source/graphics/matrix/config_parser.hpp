@@ -1,11 +1,7 @@
-/*! \file config_parser.hpp
-*
-*  \brief config_parser module for parsing a configuration JSON file into a validated
-*         configuration structure for the matrix and other application components.
-*/
+// RGB LED Matrix Graphics Library
+
 #pragma once
 
-/********************************** Includes *******************************************/
 #include "expected.hpp"
 #include "led-matrix.h"
 #include "nlohmann/json.hpp"
@@ -15,7 +11,8 @@
 
 using json = nlohmann::json;
 
-/********************************** Types *******************************************/
+namespace graphics {
+
 /**
  * \brief set of string options to manage the memory requirements for the led matrix configuration structure
  */
@@ -56,7 +53,8 @@ struct configuration_options {
     configuration_options(const configuration_options& other);
 };
 
-/********************************** Function Declarations *******************************************/
+
+
 /**
  * \brief parse configuration options from JSON into matrix options struct. Returns an RGB matrix object if the
  *        options are valid.
@@ -65,3 +63,5 @@ struct configuration_options {
  * \retval expected of options or a string if configuration is invalid
  */
 expected<configuration_options, std::string> create_options_from_json(json& config);
+
+};

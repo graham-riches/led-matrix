@@ -1,18 +1,13 @@
-/*! \file expected.hpps
-*
-*  \brief expected algebraic data type for error handling. This essentially an either type
-*         or an expanded optional that returns either the type, or a custom error type.
-*/
+// RGB LED Matrix Graphics Library
+
 #pragma once
 
-/********************************** Includes *******************************************/
 #include <optional>
 #include <utility>
 #include <exception>
 #include <functional>
 
 
-/********************************** Types *******************************************/
 /**
  * \brief class template for an expected type. This either contains a T with the _valid result
  *        of the computation, or an E, which is any custom error type
