@@ -11,3 +11,6 @@
 [submodule "modules/range-v3"]
 	path = modules/range-v3
 	url = https://github.com/ericniebler/range-v3.git
+[submodule "modules/fmt"]
+	path = modules/fmt
+	url = https://github.com/fmtlib/fmt.git
