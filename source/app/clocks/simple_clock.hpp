@@ -43,7 +43,7 @@ class simple_clock : protected shape {
                                                 canvas.height(),
                                                 graphics::horizontal_alignment::center,
                                                 graphics::vertical_alignment::center);
-        time_renderer.draw(canvas);        
+        time_renderer.draw(canvas);
     }
 
   private:
